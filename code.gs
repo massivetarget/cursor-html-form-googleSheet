@@ -5,7 +5,7 @@ const SHEET_NAME = 'Entries';
 function doPost(e) {
   try {
     // JSON डेटा को पार्स करें
-    const data = JSON.parse(e.postData.contents);
+    const data = JSON.parse(e);
 
     console.log(data);
     
