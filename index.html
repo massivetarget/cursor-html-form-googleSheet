@@ -354,6 +354,7 @@
             }
 
             const form = e.target;
+            const date = form.date.value;
             const entries = [];
             
             // Collect all entries
@@ -368,16 +369,13 @@
                 if (debitAccount && debitAmount && debitDescription && 
                     creditAccount && creditAmount && creditDescription) {
                     entries.push({
-                        type: 'debit',
-                        account: debitAccount,
-                        amount: debitAmount,
-                        description: debitDescription
-                    });
-                    entries.push({
-                        type: 'credit',
-                        account: creditAccount,
-                        amount: creditAmount,
-                        description: creditDescription
+                        date: date,
+                        debitAccount: debitAccount,
+                        debitAmount: debitAmount,
+                        debitDescription: debitDescription,
+                        creditAccount: creditAccount,
+                        creditAmount: creditAmount,
+                        creditDescription: creditDescription
                     });
                 }
             }
@@ -386,12 +384,14 @@
             google.script.run
                 .withSuccessHandler(function() {
                     alert('ફોર્મ સબમિટ કરવામાં સફળતાપૂર્વક થઈ ગયું!');
+                    form.reset(); // Reset form after successful submission
+                    setTodayDate(); // Set today's date again
                 })
                 .withFailureHandler(function(error) {
                     console.error('Error submitting form:', error);
                     alert('ફોર્મ સબમિટ કરવામાં ભૂલ આવી!');
                 })
-                .submitEntries(entries);
+                .processForm({ entries: entries });
         }
     </script>
 </body>

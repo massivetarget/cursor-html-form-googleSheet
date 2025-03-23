@@ -74,42 +74,27 @@ function processForm(data) {
     const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
     let sheet = spreadsheet.getSheetByName(SHEET_NAME);
     
-    // જો શીટ અસ્તિત્વમાં નથી તો નવી બનાવો
+    // If sheet doesn't exist, create it
     if (!sheet) {
       sheet = spreadsheet.insertSheet(SHEET_NAME);
-      // હેડર રો ઉમેરો - નવો બ્લેંક કૉલમ ઉમેર્યો
+      // Add header row
       sheet.getRange(1, 1, 1, 8).setValues([['Date', 'Debit Account', 'Debit Amount', 'Debit Description', '', 'Credit Account', 'Credit Amount', 'Credit Description']]);
     }
     
-    // દરેક એન્ટ્રી માટે નવી પંક્તિ ઉમેરો
+    // Process each entry
     const entries = data.entries;
-    const rows = entries.map(entry => {
-      if (entry.type === 'debit') {
-        return [
-          data.date,
-          entry.account,
-          entry.amount,
-          entry.description,
-          '', // Blank column
-          '', // Empty credit fields
-          '',
-          ''
-        ];
-      } else {
-        return [
-          data.date,
-          '', // Empty debit fields
-          '',
-          '',
-          '', // Blank column
-          entry.account,
-          entry.amount,
-          entry.description
-        ];
-      }
-    });
+    const rows = entries.map(entry => [
+      entry.date,
+      entry.debitAccount,
+      entry.debitAmount,
+      entry.debitDescription,
+      '', // Blank column
+      entry.creditAccount,
+      entry.creditAmount,
+      entry.creditDescription
+    ]);
     
-    // છેલ્લી પંક્તિમાં ડેટા ઉમેરો
+    // Add data to the last row
     const lastRow = Math.max(sheet.getLastRow(), 1);
     sheet.getRange(lastRow + 1, 1, rows.length, 8).setValues(rows);
     
