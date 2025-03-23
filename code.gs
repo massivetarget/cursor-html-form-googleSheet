@@ -1,5 +1,5 @@
 // સ્પ્રેડશીટ ID અને શીટ નેમ્સની વ્યાખ્યા
-const SPREADSHEET_ID = '1Uva4DQWR-7RF9qIsCfDe6wZgjYzr9nC7ZoMEoEo1_uA';
+const SPREADSHEET_ID = '1Srh4YWV7preBHJaFzO0L32iseTeJzEQ9u9lNfiHEXDE';
 const SHEET_NAME = 'Entries';
 const ACCOUNTS_SHEET_NAME = 'CharOfAccounts';
 
@@ -9,44 +9,55 @@ const ACCOUNTS_SHEET_NAME = 'CharOfAccounts';
  */
 function doPost(e) {
   try {
-    // JSON ડેટાને પાર્સ કરો
+    // Parse JSON data
     const data = JSON.parse(e);
     console.log(data);
     
-    // સ્પ્રેડશીટ ખોલો
+    // Open spreadsheet
     const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
     let sheet = spreadsheet.getSheetByName(SHEET_NAME);
     
-    // જો શીટ અસ્તિત્વમાં નથી તો નવી બનાવો
+    // If sheet doesn't exist, create it
     if (!sheet) {
       sheet = spreadsheet.insertSheet(SHEET_NAME);
-      // હેડર રો ઉમેરો
-      sheet.getRange(1, 1, 1, 7).setValues([['Date', 'Debit Account', 'Debit Amount', 'Debit Description', 'Credit Account', 'Credit Amount', 'Credit Description']]);
+      // Add header row with new column structure
+      sheet.getRange(1, 1, 1, 6).setValues([['ID', 'Date', 'Account', 'Description', 'Debit', 'Credit']]);
     }
     
-    // ડેટાને એક પંક્તિમાં ઉમેરો
-    const newRow = [
-      data.date,
-      data.debitAccount,
-      data.debitAmount,
-      data.debitDescription,
-      data.creditAccount,
-      data.creditAmount,
-      data.creditDescription
+    // Create rows for both debit and credit entries
+    const rows = [
+      // Debit entry
+      [
+        Utilities.getUuid(), // Generate unique ID
+        data.date,
+        data.debitAccount,
+        data.debitDescription,
+        data.debitAmount,
+        '' // Empty credit amount
+      ],
+      // Credit entry
+      [
+        Utilities.getUuid(), // Generate unique ID
+        data.date,
+        data.creditAccount,
+        data.creditDescription,
+        '', // Empty debit amount
+        data.creditAmount
+      ]
     ];
     
-    // છેલ્લી પંક્તિમાં ડેટા ઉમેરો
+    // Add data to the last row
     const lastRow = Math.max(sheet.getLastRow(), 1);
-    sheet.getRange(lastRow + 1, 1, 1, newRow.length).setValues([newRow]);
+    sheet.getRange(lastRow + 1, 1, rows.length, 6).setValues(rows);
     
-    // સફળતા સંદેશ પાછો મોકલો
+    // Return success message
     return ContentService.createTextOutput(JSON.stringify({
       'status': 'success',
       'message': 'Data saved successfully'
     })).setMimeType(ContentService.MimeType.JSON);
     
   } catch (error) {
-    // ભૂલ સંદેશ પાછો મોકલો
+    // Return error message
     return ContentService.createTextOutput(JSON.stringify({
       'status': 'error',
       'message': error.toString()
@@ -77,26 +88,40 @@ function processForm(data) {
     // If sheet doesn't exist, create it
     if (!sheet) {
       sheet = spreadsheet.insertSheet(SHEET_NAME);
-      // Add header row
-      sheet.getRange(1, 1, 1, 8).setValues([['Date', 'Debit Account', 'Debit Amount', 'Debit Description', '', 'Credit Account', 'Credit Amount', 'Credit Description']]);
+      // Add header row with new column structure
+      sheet.getRange(1, 1, 1, 6).setValues([['ID', 'Date', 'Account', 'Description', 'Debit', 'Credit']]);
     }
     
     // Process each entry
     const entries = data.entries;
-    const rows = entries.map(entry => [
-      entry.date,
-      entry.debitAccount,
-      entry.debitAmount,
-      entry.debitDescription,
-      '', // Blank column
-      entry.creditAccount,
-      entry.creditAmount,
-      entry.creditDescription
-    ]);
+    const rows = [];
+    
+    // Create rows for both debit and credit entries
+    entries.forEach(entry => {
+      // Add debit entry
+      rows.push([
+        Utilities.getUuid(), // Generate unique ID
+        entry.date,
+        entry.debitAccount,
+        entry.debitDescription,
+        entry.debitAmount,
+        '' // Empty credit amount
+      ]);
+      
+      // Add credit entry
+      rows.push([
+        Utilities.getUuid(), // Generate unique ID
+        entry.date,
+        entry.creditAccount,
+        entry.creditDescription,
+        '', // Empty debit amount
+        entry.creditAmount
+      ]);
+    });
     
     // Add data to the last row
     const lastRow = Math.max(sheet.getLastRow(), 1);
-    sheet.getRange(lastRow + 1, 1, rows.length, 8).setValues(rows);
+    sheet.getRange(lastRow + 1, 1, rows.length, 6).setValues(rows);
     
     return true;
     
