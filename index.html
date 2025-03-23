@@ -209,6 +209,86 @@
         .modal-buttons button {
             width: auto;
         }
+
+        /* મલ્ટિપલ એન્ટ્રી સ્ટાઇલ્સ */
+        .multiple-entry-option {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .multiple-entry-option input[type="checkbox"] {
+            width: auto;
+            height: auto;
+        }
+
+        .entry-section {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .entry-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .remove-entry {
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 30px;
+            height: 30px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .remove-entry:hover {
+            background-color: #cc0000;
+        }
+
+        .add-entry-btn {
+            background-color: #2196F3;
+            margin-bottom: 15px;
+        }
+
+        .add-entry-btn:hover {
+            background-color: #1976D2;
+        }
+
+        .total-amounts {
+            background-color: #f8f9fa;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .total-amounts h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .total-amounts p {
+            margin: 5px 0;
+            font-size: 1.1rem;
+        }
+
+        .total-error {
+            color: #ff4444;
+            font-weight: bold;
+            margin-top: 10px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -222,45 +302,67 @@
             </div>
 
             <!-- ડેબિટ એન્ટ્રી સેક્શન -->
-            <div class="transaction-section">
-                <h3>ડેબિટ એન્ટ્રી</h3>
-                <div class="form-group">
-                    <label for="debitAccount">ડેબિટ એકાઉન્ટ:</label>
-                    <select id="debitAccount" name="debitAccount" required onchange="handleAccountSelect(this, 'debit')">
-                        <option value="">એકાઉન્ટ પસંદ કરો</option>
-                        <option value="new" class="new-account-option">+ નવું એકાઉન્ટ</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="debitAmount">ડેબિટ રકમ:</label>
-                    <input type="number" id="debitAmount" name="debitAmount" required min="0" step="0.01">
-                    <div class="amount-validation" id="debitValidation"></div>
-                </div>
-                <div class="form-group">
-                    <label for="debitDescription">ડેબિટ વર્ણન:</label>
-                    <input type="text" id="debitDescription" name="debitDescription" required>
+            <h3>ડેબિટ એન્ટ્રી</h3>
+            <div id="debitEntriesContainer">
+                <!-- પહેલી ડેબિટ એન્ટ્રી -->
+                <div class="entry-section">
+                    <div class="entry-header">
+                        <h3>ડેબિટ એન્ટ્રી #1</h3>
+                        <button type="button" class="remove-entry" onclick="removeEntry(this, 'debit')">×</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="debitAccount1">ડેબિટ એકાઉન્ટ:</label>
+                        <select id="debitAccount1" name="debitAccount1" required onchange="handleAccountSelect(this, 'debit')">
+                            <option value="">એકાઉન્ટ પસંદ કરો</option>
+                            <option value="new" class="new-account-option">+ નવું એકાઉન્ટ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="debitAmount1">ડેબિટ રકમ:</label>
+                        <input type="number" id="debitAmount1" name="debitAmount1" required min="0" step="0.01" onchange="validateTotalAmounts()">
+                    </div>
+                    <div class="form-group">
+                        <label for="debitDescription1">ડેબિટ વર્ણન:</label>
+                        <input type="text" id="debitDescription1" name="debitDescription1" required>
+                    </div>
                 </div>
             </div>
+            <button type="button" class="add-entry-btn" onclick="addEntry('debit')">+ નવી ડેબિટ એન્ટ્રી ઉમેરો</button>
 
             <!-- ક્રેડિટ એન્ટ્રી સેક્શન -->
-            <div class="transaction-section">
-                <h3>ક્રેડિટ એન્ટ્રી</h3>
-                <div class="form-group">
-                    <label for="creditAccount">ક્રેડિટ એકાઉન્ટ:</label>
-                    <select id="creditAccount" name="creditAccount" required onchange="handleAccountSelect(this, 'credit')">
-                        <option value="">એકાઉન્ટ પસંદ કરો</option>
-                        <option value="new" class="new-account-option">+ નવું એકાઉન્ટ</option>
-                    </select>
+            <h3>ક્રેડિટ એન્ટ્રી</h3>
+            <div id="creditEntriesContainer">
+                <!-- પહેલી ક્રેડિટ એન્ટ્રી -->
+                <div class="entry-section">
+                    <div class="entry-header">
+                        <h3>ક્રેડિટ એન્ટ્રી #1</h3>
+                        <button type="button" class="remove-entry" onclick="removeEntry(this, 'credit')">×</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="creditAccount1">ક્રેડિટ એકાઉન્ટ:</label>
+                        <select id="creditAccount1" name="creditAccount1" required onchange="handleAccountSelect(this, 'credit')">
+                            <option value="">એકાઉન્ટ પસંદ કરો</option>
+                            <option value="new" class="new-account-option">+ નવું એકાઉન્ટ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="creditAmount1">ક્રેડિટ રકમ:</label>
+                        <input type="number" id="creditAmount1" name="creditAmount1" required min="0" step="0.01" onchange="validateTotalAmounts()">
+                    </div>
+                    <div class="form-group">
+                        <label for="creditDescription1">ક્રેડિટ વર્ણન:</label>
+                        <input type="text" id="creditDescription1" name="creditDescription1" required>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="creditAmount">ક્રેડિટ રકમ:</label>
-                    <input type="number" id="creditAmount" name="creditAmount" required min="0" step="0.01">
-                    <div class="amount-validation" id="creditValidation"></div>
-                </div>
-                <div class="form-group">
-                    <label for="creditDescription">ક્રેડિટ વર્ણન:</label>
-                    <input type="text" id="creditDescription" name="creditDescription" required>
-                </div>
+            </div>
+            <button type="button" class="add-entry-btn" onclick="addEntry('credit')">+ નવી ક્રેડિટ એન્ટ્રી ઉમેરો</button>
+
+            <!-- કુલ રકમો -->
+            <div class="total-amounts">
+                <h3>કુલ રકમો</h3>
+                <p>કુલ ડેબિટ: <span id="totalDebit">0.00</span></p>
+                <p>કુલ ક્રેડિટ: <span id="totalCredit">0.00</span></p>
+                <p class="total-error" id="totalError">ડેબિટ અને ક્રેડિટની કુલ રકમ સમાન હોવી જોઈએ</p>
             </div>
 
             <button type="submit">સબમિટ કરો</button>
@@ -297,12 +399,14 @@
         // વેરિએબલ્સ
         let currentAccountType = ''; // 'debit' અથવા 'credit'
         let accounts = [];
-        let isFirstEntry = true; // પહેલી એન્ટ્રી માટે ફ્લેગ
+        let debitEntryCount = 1;
+        let creditEntryCount = 1;
 
         // પેજ લોડ થાય ત્યારે એકાઉન્ટ્સ લોડ કરો અને આજની તારીખ સેટ કરો
         window.onload = function() {
             loadAccounts();
             setTodayDate();
+            validateTotalAmounts();
         };
 
         /**
@@ -333,18 +437,23 @@
          * એકાઉન્ટ ડ્રોપડાઉન્સ અપડેટ કરે છે
          */
         function updateAccountDropdowns() {
-            const debitSelect = document.getElementById('debitAccount');
-            const creditSelect = document.getElementById('creditAccount');
-            
-            // પહેલાના ઓપ્શન્સ ક્લિયર કરો (પહેલા બે ઓપ્શન્સ સિવાય)
-            while (debitSelect.options.length > 2) debitSelect.remove(2);
-            while (creditSelect.options.length > 2) creditSelect.remove(2);
-            
-            // નવા એકાઉન્ટ ઓપ્શન્સ ઉમેરો
-            accounts.forEach(account => {
-                debitSelect.add(new Option(account, account));
-                creditSelect.add(new Option(account, account));
-            });
+            // બધી એન્ટ્રી પેર્સ માટે ડ્રોપડાઉન્સ અપડેટ કરે છે
+            for (let i = 1; i <= debitEntryCount; i++) {
+                const debitSelect = document.getElementById(`debitAccount${i}`);
+                const creditSelect = document.getElementById(`creditAccount${i}`);
+                
+                if (debitSelect && creditSelect) {
+                    // પહેલાના ઓપ્શન્સ ક્લિયર કરો (પહેલા બે ઓપ્શન્સ સિવાય)
+                    while (debitSelect.options.length > 2) debitSelect.remove(2);
+                    while (creditSelect.options.length > 2) creditSelect.remove(2);
+                    
+                    // નવા એકાઉન્ટ ઓપ્શન્સ ઉમેરો
+                    accounts.forEach(account => {
+                        debitSelect.add(new Option(account, account));
+                        creditSelect.add(new Option(account, account));
+                    });
+                }
+            }
         }
 
         /**
@@ -414,89 +523,90 @@
         }
 
         /**
-         * ડેબિટ અને ક્રેડિટ રકમો વેલિડેટ કરે છે
-         * @return {boolean} - વેલિડેશન સ્થિતિ
+         * કુલ રકમો વેલિડેટ કરે છે
          */
-        function validateAmounts() {
-            const debitAmount = parseFloat(document.getElementById('debitAmount').value) || 0;
-            const creditAmount = parseFloat(document.getElementById('creditAmount').value) || 0;
-            const debitValidation = document.getElementById('debitValidation');
-            const creditValidation = document.getElementById('creditValidation');
+        function validateTotalAmounts() {
+            let totalDebit = 0;
+            let totalCredit = 0;
+            const totalError = document.getElementById('totalError');
             
-            if (debitAmount !== creditAmount) {
-                debitValidation.textContent = 'ડેબિટ અને ક્રેડિટ રકમ સમાન હોવી જોઈએ';
-                creditValidation.textContent = 'ડેબિટ અને ક્રેડિટ રકમ સમાન હોવી જોઈએ';
-                debitValidation.style.display = 'block';
-                creditValidation.style.display = 'block';
+            // ડેબિટ રકમોનો સરવાળો
+            for (let i = 1; i <= debitEntryCount; i++) {
+                const amount = parseFloat(document.getElementById(`debitAmount${i}`).value) || 0;
+                totalDebit += amount;
+            }
+            
+            // ક્રેડિટ રકમોનો સરવાળો
+            for (let i = 1; i <= creditEntryCount; i++) {
+                const amount = parseFloat(document.getElementById(`creditAmount${i}`).value) || 0;
+                totalCredit += amount;
+            }
+            
+            // કુલ રકમો અપડેટ કરો
+            document.getElementById('totalDebit').textContent = totalDebit.toFixed(2);
+            document.getElementById('totalCredit').textContent = totalCredit.toFixed(2);
+            
+            // વેલિડેશન ચેક કરો
+            if (totalDebit !== totalCredit) {
+                totalError.style.display = 'block';
                 return false;
+            } else {
+                totalError.style.display = 'none';
+                return true;
             }
-            
-            debitValidation.style.display = 'none';
-            creditValidation.style.display = 'none';
-            return true;
         }
 
         /**
-         * ડેબિટ એન્ટ્રી સિંક કરે છે
+         * નવી એન્ટ્રી ઉમેરે છે
+         * @param {string} type - એન્ટ્રીનો પ્રકાર ('debit' અથવા 'credit')
          */
-        function syncDebitEntry() {
-            if (!isFirstEntry) return; // જો પહેલી એન્ટ્રી નથી તો સિંક ન કરો
+        function addEntry(type) {
+            const container = document.getElementById(`${type}EntriesContainer`);
+            const count = type === 'debit' ? ++debitEntryCount : ++creditEntryCount;
             
-            const debitAmount = document.getElementById('debitAmount').value;
-            const debitDescription = document.getElementById('debitDescription').value;
+            const newEntry = document.createElement('div');
+            newEntry.className = 'entry-section';
+            newEntry.innerHTML = `
+                <div class="entry-header">
+                    <h3>${type === 'debit' ? 'ડેબિટ' : 'ક્રેડિટ'} એન્ટ્રી #${count}</h3>
+                    <button type="button" class="remove-entry" onclick="removeEntry(this, '${type}')">×</button>
+                </div>
+                <div class="form-group">
+                    <label for="${type}Account${count}">${type === 'debit' ? 'ડેબિટ' : 'ક્રેડિટ'} એકાઉન્ટ:</label>
+                    <select id="${type}Account${count}" name="${type}Account${count}" required onchange="handleAccountSelect(this, '${type}')">
+                        <option value="">એકાઉન્ટ પસંદ કરો</option>
+                        <option value="new" class="new-account-option">+ નવું એકાઉન્ટ</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="${type}Amount${count}">${type === 'debit' ? 'ડેબિટ' : 'ક્રેડિટ'} રકમ:</label>
+                    <input type="number" id="${type}Amount${count}" name="${type}Amount${count}" required min="0" step="0.01" onchange="validateTotalAmounts()">
+                </div>
+                <div class="form-group">
+                    <label for="${type}Description${count}">${type === 'debit' ? 'ડેબિટ' : 'ક્રેડિટ'} વર્ણન:</label>
+                    <input type="text" id="${type}Description${count}" name="${type}Description${count}" required>
+                </div>
+            `;
             
-            // ક્રેડિટ એન્ટ્રી સિંક કરો
-            document.getElementById('creditAmount').value = debitAmount;
-            document.getElementById('creditDescription').value = debitDescription;
-            
-            // વેલિડેશન ચેક કરો
-            validateAmounts();
+            container.appendChild(newEntry);
+            updateAccountDropdowns();
         }
 
         /**
-         * ક્રેડિટ એન્ટ્રી સિંક કરે છે
+         * એન્ટ્રી દૂર કરે છે
+         * @param {HTMLElement} button - રિમૂવ બટન એલિમેન્ટ
+         * @param {string} type - એન્ટ્રીનો પ્રકાર ('debit' અથવા 'credit')
          */
-        function syncCreditEntry() {
-            if (!isFirstEntry) return; // જો પહેલી એન્ટ્રી નથી તો સિંક ન કરો
-            
-            const creditAmount = document.getElementById('creditAmount').value;
-            const creditDescription = document.getElementById('creditDescription').value;
-            
-            // ડેબિટ એન્ટ્રી સિંક કરો
-            document.getElementById('debitAmount').value = creditAmount;
-            document.getElementById('debitDescription').value = creditDescription;
-            
-            // વેલિડેશન ચેક કરો
-            validateAmounts();
+        function removeEntry(button, type) {
+            const entry = button.closest('.entry-section');
+            entry.remove();
+            if (type === 'debit') {
+                debitEntryCount--;
+            } else {
+                creditEntryCount--;
+            }
+            validateTotalAmounts();
         }
-
-        // ઇવેન્ટ લિસનર્સ
-        document.getElementById('debitAmount').addEventListener('input', function() {
-            validateAmounts();
-            syncDebitEntry();
-        });
-        
-        document.getElementById('debitDescription').addEventListener('input', function() {
-            if (isFirstEntry) {
-                document.getElementById('creditDescription').value = this.value;
-            }
-        });
-        
-        document.getElementById('creditAmount').addEventListener('input', function() {
-            validateAmounts();
-            syncCreditEntry();
-        });
-        
-        document.getElementById('creditDescription').addEventListener('input', function() {
-            if (isFirstEntry) {
-                document.getElementById('debitDescription').value = this.value;
-            }
-        });
-
-        // ફોર્મ રીસેટ થાય ત્યારે ફ્લેગ રીસેટ કરો
-        document.getElementById('doubleEntryForm').addEventListener('reset', function() {
-            isFirstEntry = true;
-        });
 
         /**
          * ફોર્મ સબમિટ હેન્ડલર
@@ -505,19 +615,36 @@
         function handleFormSubmit(e) {
             e.preventDefault();
             
-            if (!validateAmounts()) {
+            if (!validateTotalAmounts()) {
                 return;
             }
 
             const form = e.target;
+            const entries = [];
+            
+            // ડેબિટ એન્ટ્રી કલેક્ટ કરો
+            for (let i = 1; i <= debitEntryCount; i++) {
+                entries.push({
+                    type: 'debit',
+                    account: form[`debitAccount${i}`].value,
+                    amount: form[`debitAmount${i}`].value,
+                    description: form[`debitDescription${i}`].value
+                });
+            }
+            
+            // ક્રેડિટ એન્ટ્રી કલેક્ટ કરો
+            for (let i = 1; i <= creditEntryCount; i++) {
+                entries.push({
+                    type: 'credit',
+                    account: form[`creditAccount${i}`].value,
+                    amount: form[`creditAmount${i}`].value,
+                    description: form[`creditDescription${i}`].value
+                });
+            }
+
             const data = {
                 date: form.date.value,
-                debitAccount: form.debitAccount.value,
-                debitAmount: form.debitAmount.value,
-                debitDescription: form.debitDescription.value,
-                creditAccount: form.creditAccount.value,
-                creditAmount: form.creditAmount.value,
-                creditDescription: form.creditDescription.value
+                entries: entries
             };
 
             // સબમિટ બટનને ડિસેબલ કરો
@@ -529,16 +656,21 @@
                 .withSuccessHandler(function() {
                     alert('ડેટા સફળતાપૂર્વક સેવ કરાયો!');
                     form.reset();
-                    setTodayDate(); // ફોર્મ રીસેટ પછી આજની તારીખ સેટ કરો
-                    isFirstEntry = true; // પછીની એન્ટ્રી માટે સિંક ફ્લેગ રીસેટ કરો
-                    // સબમિટ બટનને ફરીથી એનેબલ કરો
+                    setTodayDate();
+                    // વધારાની એન્ટ્રી સેક્શન્સ દૂર કરો
+                    const debitContainer = document.getElementById('debitEntriesContainer');
+                    const creditContainer = document.getElementById('creditEntriesContainer');
+                    while (debitContainer.children.length > 1) debitContainer.removeChild(debitContainer.lastChild);
+                    while (creditContainer.children.length > 1) creditContainer.removeChild(creditContainer.lastChild);
+                    debitEntryCount = 1;
+                    creditEntryCount = 1;
+                    validateTotalAmounts();
                     submitButton.disabled = false;
                     submitButton.textContent = 'સબમિટ કરો';
                 })
                 .withFailureHandler(function(error) {
                     console.error('Error:', error);
                     alert('એક ભૂલ આવી! કૃપા કરી ફરીથી પ્રયાસ કરો.');
-                    // સબમિટ બટનને ફરીથી એનેબલ કરો
                     submitButton.disabled = false;
                     submitButton.textContent = 'સબમિટ કરો';
                 })

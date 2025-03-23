@@ -27,3 +27,31 @@
 ## કોન્ટ્રિબ્યુશન
 
 તમારા સૂચનો અને સુધારાઓનું સ્વાગત છે. કૃપા કરીને પુલ રિક્વેસ્ટ મોકલો અથવા ઇશ્યુ રિપોર્ટ કરો.
+
+## ટેક્નિકલ વિગતો
+
+### API એન્ડપોઇન્ટ્સ
+
+- `doGet()`: HTML ફોર્મ રેન્ડર કરે છે
+- `doPost()`: ફોર્મ ડેટા સબમિશન હેન્ડલ કરે છે
+- `processForm()`: એન્ટ્રી ડેટા વેલિડેટ અને સેવ કરે છે
+- `getAccounts()`: એકાઉન્ટ્સની લિસ્ટ મેળવે છે
+- `addNewAccount()`: નવું એકાઉન્ટ ઉમેરે છે
+
+### ડેટા સ્ટ્રક્ચર
+
+સ્પ્રેડશીટમાં બે શીટ્સ છે:
+
+1. Entries શીટ:
+   - Date
+   - Debit Account
+   - Debit Amount 
+   - Debit Description
+   - Credit Account
+   - Credit Amount
+   - Credit Description
+
+2. CharOfAccounts શીટ:
+   - Account Name
+   - Account Type
+
