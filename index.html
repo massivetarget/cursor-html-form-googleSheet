@@ -1,528 +1,101 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- Title of the form in Gujarati: "Double Entry Accounting Form" -->
     <title>ડબલ એન્ટ્રી એકાઉન્ટિંગ ફોર્મ</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#ffffff">
-    <style>
-        /* બેઝિક CSS રીસેટ */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-text-size-adjust: 100%;
-        }
-
-        html {
-            height: 100%;
-            height: -webkit-fill-available;
-            font-size: 16px; /* Reduced from 32px */
-            -webkit-text-size-adjust: 100%;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-            display: flex;
-            flex-direction: column;
-            font-size: 1.1rem; /* Reduced from 2.5rem */
-            position: fixed;
-            width: 100%;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            overflow: hidden;
-            -webkit-overflow-scrolling: touch;
-            overscroll-behavior-y: none;
-        }
-
-        /* કન્ટેનર સ્ટાઇલ્સ */
-        .container {
-            background-color: white;
-            padding: 20px; /* Reduced from 40px */
-            border-radius: 8px; /* Reduced from 16px */
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            overflow: hidden;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        /* ફોર્મ સ્ટાઇલ્સ */
-        #doubleEntryForm {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        /* એન્ટ્રી કન્ટેનર સ્ટાઇલ્સ */
-        #entriesContainer {
-            flex: 1;
-            overflow-y: auto;
-            margin-bottom: 30px;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 30px;
-        }
-
-        /* હેડિંગ સ્ટાઇલ્સ */
-        h2 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 25px; /* Reduced from 45px */
-            font-size: clamp(1.5rem, 3vw, 2rem); /* Reduced from 2.5rem, 6vw, 3rem */
-        }
-
-        /* ફોર્મ ગ્રુપ સ્ટાઇલ્સ */
-        .form-group {
-            margin-bottom: 15px; /* Reduced from 25px */
-            width: 100%;
-        }
-
-        /* લેબલ સ્ટાઇલ્સ */
-        label {
-            display: block;
-            margin-bottom: 5px; /* Reduced from 10px */
-            color: #555;
-            font-weight: bold;
-            font-size: clamp(1rem, 2vw, 1.2rem); /* Reduced from 1.8rem, 4vw, 2.2rem */
-        }
-
-        /* ઇનપુટ ફીલ્ડ્સ સ્ટાઇલ્સ */
-        input[type="text"],
-        input[type="number"],
-        input[type="date"],
-        select {
-            width: 100%;
-            padding: 12px 15px; /* Reduced from 25px 30px */
-            margin-bottom: 5px; /* Reduced from 10px */
-            border: 2px solid #ddd; /* Reduced from 3px */
-            border-radius: 5px; /* Reduced from 10px */
-            font-size: clamp(1rem, 2vw, 1.2rem); /* Reduced from 1.8rem, 4vw, 2.2rem */
-            transition: border-color 0.3s ease;
-            height: 50px; /* Reduced from 100px */
-        }
-
-        /* ઇનપુટ ફોકસ સ્ટાઇલ્સ */
-        input:focus,
-        select:focus {
-            outline: none;
-            border-color: #4CAF50;
-        }
-
-        /* બટન સ્ટાઇલ્સ */
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px 15px; /* Reduced from 25px 30px */
-            border: none;
-            border-radius: 5px; /* Reduced from 10px */
-            cursor: pointer;
-            font-size: clamp(1rem, 2vw, 1.2rem); /* Reduced from 1.8rem, 4vw, 2.2rem */
-            font-weight: bold;
-            transition: all 0.3s ease;
-            height: 50px; /* Reduced from 100px */
-            min-width: 150px; /* Reduced from 250px */
-        }
-
-        button:hover {
-            background-color: #45a049;
-            transform: translateY(-1px);
-        }
-
-        /* ટ્રાન્ઝેક્શન સેક્શન સ્ટાઇલ્સ */
-        .transaction-section {
-            border: 1px solid #ddd;
-            padding: 6px 12px;
-            margin-bottom: 6px;
-            border-radius: 4px;
-            max-width: 100%;
-        }
-
-        .transaction-section h3 {
-            color: #333;
-            margin-bottom: 6px;
-            font-size: 1.4rem;
-        }
-
-        /* વેલિડેશન મેસેજ સ્ટાઇલ્સ */
-        .amount-validation {
-            color: #ff4444;
-            font-size: 0.85rem;
-            margin-top: 2px;
-            display: none;
-        }
-
-        /* મોબાઇલ રિસ્પોન્સિવ ડિઝાઇન */
-        @media screen and (max-width: 768px) {
-            html {
-                font-size: 18px; /* Reduced from 36px */
-            }
-
-            body {
-                font-size: 1.3rem; /* Reduced from 2.8rem */
-            }
-
-            .container {
-                padding: 15px; /* Reduced from 25px */
-            }
-
-            .entry-section {
-                padding: 20px; /* Reduced from 35px */
-            }
-
-            .total-amounts {
-                padding: 20px; /* Reduced from 35px */
-            }
-
-            button {
-                height: 60px; /* Reduced from 125px */
-                font-size: 1.3rem;
-                padding: 15px;
-            }
-
-            input[type="text"],
-            input[type="number"],
-            input[type="date"],
-            select {
-                height: 60px; /* Reduced from 125px */
-                font-size: 1.3rem;
-                padding: 15px;
-            }
-
-            label {
-                font-size: 1.3rem;
-            }
-
-            h2 {
-                font-size: 1.8rem;
-            }
-
-            .entry-header h3 {
-                font-size: 1.6rem;
-            }
-        }
-
-        @media screen and (max-width: 480px) {
-            html {
-                font-size: 20px; /* Reduced from 40px */
-            }
-
-            body {
-                font-size: 1.5rem; /* Reduced from 3.2rem */
-            }
-
-            .container {
-                padding: 15px; /* Reduced from 20px */
-            }
-
-            .entry-section {
-                padding: 15px; /* Reduced from 30px */
-            }
-
-            .form-group {
-                margin-bottom: 15px; /* Reduced from 25px */
-            }
-
-            input[type="text"],
-            input[type="number"],
-            input[type="date"],
-            select {
-                height: 70px; /* Reduced from 150px */
-                font-size: 1.5rem;
-                padding: 20px;
-            }
-
-            button {
-                height: 70px; /* Reduced from 150px */
-                font-size: 1.5rem;
-                padding: 20px;
-            }
-
-            label {
-                font-size: 1.5rem;
-            }
-
-            h2 {
-                font-size: 2rem;
-            }
-
-            .entry-header h3 {
-                font-size: 1.8rem;
-            }
-        }
-
-        /* એકાઉન્ટ સિલેક્ટ કન્ટેનર સ્ટાઇલ્સ */
-        .account-select-container {
-            display: flex;
-            gap: 10px;
-            align-items: flex-end;
-        }
-
-        .account-select-container select {
-            flex: 1;
-        }
-
-        /* નવું એકાઉન્ટ ઓપ્શન સ્ટાઇલ્સ */
-        .new-account-option {
-            color: #2196F3;
-            font-weight: bold;
-        }
-
-        /* મોડલ સ્ટાઇલ્સ */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 500px;
-            margin: 20px auto;
-            position: relative;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .close-modal {
-            position: absolute;
-            right: 15px;
-            top: 10px;
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
-
-        .modal-buttons button {
-            width: auto;
-        }
-
-        /* મલ્ટિપલ એન્ટ્રી સ્ટાઇલ્સ */
-        .multiple-entry-option {
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .multiple-entry-option input[type="checkbox"] {
-            width: auto;
-            height: auto;
-        }
-
-        /* એન્ટ્રી સેક્શન સ્ટાઇલ્સ */
-        .entry-section {
-            border: 2px solid #ddd; /* Reduced from 3px */
-            padding: 20px; /* Reduced from 40px */
-            margin-bottom: 20px; /* Reduced from 40px */
-            border-radius: 8px; /* Reduced from 16px */
-            background-color: #fff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .entry-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px; /* Reduced from 35px */
-        }
-
-        .entry-header h3 {
-            font-size: clamp(1.2rem, 3vw, 1.5rem); /* Reduced from 2rem, 5vw, 2.5rem */
-            margin: 0;
-        }
-
-        .remove-entry {
-            background-color: #ff4444;
-            color: white;
-            border: none;
-            border-radius: 5px; /* Reduced from 10px */
-            width: 30px; /* Reduced from 60px */
-            height: 30px; /* Reduced from 60px */
-            font-size: 20px; /* Reduced from 40px */
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .remove-entry:hover {
-            background-color: #cc0000;
-        }
-
-        .add-entry-btn {
-            background-color: #2196F3;
-            margin-bottom: 15px;
-        }
-
-        .add-entry-btn:hover {
-            background-color: #1976D2;
-        }
-
-        /* કુલ રકમો સેક્શન */
-        .total-amounts {
-            padding: 20px; /* Reduced from 40px */
-            margin: 0;
-            background-color: #f8f9fa;
-            border-radius: 8px; /* Reduced from 16px */
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            gap: 20px; /* Reduced from 35px */
-            position: sticky;
-            bottom: 0;
-            z-index: 10;
-            background-color: white;
-        }
-
-        .total-amounts h3 {
-            font-size: clamp(1.2rem, 3vw, 1.5rem); /* Reduced from 2rem, 5vw, 2.5rem */
-            margin-bottom: 10px; /* Reduced from 20px */
-        }
-
-        .total-amounts p {
-            font-size: clamp(1rem, 2vw, 1.2rem); /* Reduced from 1.8rem, 4vw, 2.2rem */
-            margin: 8px 0; /* Reduced from 15px */
-        }
-
-        .total-error {
-            color: #ff4444;
-            font-weight: bold;
-            margin-top: 10px;
-            display: none;
-        }
-
-        /* સબમિટ બટન સ્ટાઇલ્સ */
-        button[type="submit"] {
-            position: sticky;
-            bottom: 0;
-            z-index: 10;
-            margin-top: 15px;
-            background-color: white;
-        }
-
-        /* ડાર્ક મોડ સ્ટાઇલ્સ */
-        body.dark-mode .container {
-            background-color: #2d2d2d;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        body.dark-mode .total-amounts {
-            background-color: #333333;
-        }
-
-        body.dark-mode .amount-validation,
-        body.dark-mode .total-error {
-            color: #ff6b6b;
-        }
-    </style>
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Viewport meta tag for responsive design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <!-- મુખ્ય કન્ટેનર -->
-    <div class="container">
+    <!-- Main container div -->
+    <div>
+        <!-- Main form with submit handler -->
         <form id="doubleEntryForm" onsubmit="handleFormSubmit(event)">
-            <!-- તારીખ ફીલ્ડ -->
-            <div class="form-group">
+            <!-- Date input section -->
+            <div>
                 <label for="date">તારીખ:</label>
                 <input type="date" id="date" name="date" required>
             </div>
 
-            <!-- એન્ટ્રી સેક્શન -->
+            <!-- Container for all accounting entries -->
             <div id="entriesContainer">
-                <!-- પહેલી એન્ટ્રી -->
-                <div class="entry-section">
-                    <div class="entry-header">
+                <!-- Individual entry section -->
+                <div>
+                    <!-- Entry header with entry number and remove button -->
+                    <div>
                         <h3>એન્ટ્રી #1</h3>
-                        <button type="button" class="remove-entry" onclick="removeEntry(this)">×</button>
+                        <button type="button" onclick="removeEntry(this)">×</button>
                     </div>
-                    <div class="form-group">
+                    <!-- Debit account selection -->
+                    <div>
                         <label for="debitAccount1">ડેબિટ એકાઉન્ટ:</label>
                         <select id="debitAccount1" name="debitAccount1" required onchange="handleAccountSelect(this, 'debit')">
                             <option value="">એકાઉન્ટ પસંદ કરો</option>
-                            <option value="new" class="new-account-option">+ નવું એકાઉન્ટ</option>
+                            <option value="new">+ નવું એકાઉન્ટ</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <!-- Debit amount input -->
+                    <div>
                         <label for="debitAmount1">ડેબિટ રકમ:</label>
                         <input type="number" id="debitAmount1" name="debitAmount1" required min="0" step="0.01" onchange="validateTotalAmounts()">
                     </div>
-                    <div class="form-group">
+                    <!-- Debit description input -->
+                    <div>
                         <label for="debitDescription1">ડેબિટ વર્ણન:</label>
                         <input type="text" id="debitDescription1" name="debitDescription1" required>
                     </div>
-                    <div class="form-group">
+                    <!-- Credit account selection -->
+                    <div>
                         <label for="creditAccount1">ક્રેડિટ એકાઉન્ટ:</label>
                         <select id="creditAccount1" name="creditAccount1" required onchange="handleAccountSelect(this, 'credit')">
                             <option value="">એકાઉન્ટ પસંદ કરો</option>
-                            <option value="new" class="new-account-option">+ નવું એકાઉન્ટ</option>
+                            <option value="new">+ નવું એકાઉન્ટ</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <!-- Credit amount input -->
+                    <div>
                         <label for="creditAmount1">ક્રેડિટ રકમ:</label>
                         <input type="number" id="creditAmount1" name="creditAmount1" required min="0" step="0.01" onchange="validateTotalAmounts()">
                     </div>
-                    <div class="form-group">
+                    <!-- Credit description input -->
+                    <div>
                         <label for="creditDescription1">ક્રેડિટ વર્ણન:</label>
                         <input type="text" id="creditDescription1" name="creditDescription1" required>
                     </div>
                 </div>
             </div>
-            <button type="button" class="add-entry-btn" onclick="addEntry()">+ નવી એન્ટ્રી ઉમેરો</button>
+            <!-- Button to add new entry -->
+            <button type="button" onclick="addEntry()">+ નવી એન્ટ્રી ઉમેરો</button>
 
-            <!-- કુલ રકમો -->
-            <div class="total-amounts">
+            <!-- Total amounts section -->
+            <div>
                 <div>
                     <h3>કુલ રકમો</h3>
                     <p>કુલ ડેબિટ: <span id="totalDebit">0.00</span></p>
                     <p>કુલ ક્રેડિટ: <span id="totalCredit">0.00</span></p>
                 </div>
-                <p class="total-error" id="totalError">ડેબિટ અને ક્રેડિટની કુલ રકમ સમાન હોવી જોઈએ</p>
+                <!-- Error message for unequal debit and credit -->
+                <p id="totalError">ડેબિટ અને ક્રેડિટની કુલ રકમ સમાન હોવી જોઈએ</p>
             </div>
 
+            <!-- Form submit button -->
             <button type="submit">સબમિટ કરો</button>
         </form>
     </div>
 
-    <!-- નવું એકાઉન્ટ ઉમેરવાનું મોડલ -->
-    <div id="addAccountModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeAddAccountModal()">&times;</span>
+    <!-- Modal for adding new account -->
+    <div id="addAccountModal">
+        <div>
+            <!-- Close button -->
+            <span onclick="closeAddAccountModal()">&times;</span>
             <h3>નવું એકાઉન્ટ ઉમેરો</h3>
-            <div class="form-group">
+            <!-- New account name input -->
+            <div>
                 <label for="newAccountName">એકાઉન્ટ નામ:</label>
                 <input type="text" id="newAccountName" required>
             </div>
-            <div class="form-group">
+            <!-- Account type selection -->
+            <div>
                 <label for="newAccountType">એકાઉન્ટ પ્રકાર:</label>
                 <select id="newAccountType" required>
                     <option value="Asset">સંપત્તિ</option>
@@ -532,7 +105,8 @@
                     <option value="Expense">ખર્ચ</option>
                 </select>
             </div>
-            <div class="modal-buttons">
+            <!-- Modal action buttons -->
+            <div>
                 <button type="button" onclick="closeAddAccountModal()">રદ કરો</button>
                 <button type="button" onclick="addNewAccount()">ઉમેરો</button>
             </div>
@@ -540,24 +114,20 @@
     </div>
 
     <script>
-        // વેરિએબલ્સ
-        let currentAccountType = ''; // 'debit' અથવા 'credit'
-        let accounts = [];
-        let entryCount = 1;
+        // Variables for managing form state
+        let currentAccountType = ''; // Tracks whether we're adding a debit or credit account
+        let accounts = []; // Array to store all available accounts
+        let entryCount = 1; // Counter for number of entries
 
-        // પેજ લોડ થાય ત્યારે એકાઉન્ટ્સ લોડ કરો અને આજની તારીખ સેટ કરો
+        // Initialize form when page loads
         window.onload = function() {
-            loadAccounts();
-            setTodayDate();
-            validateTotalAmounts();
-            updateDarkMode();
-            
-            // દર 5 મિનિટે ડાર્ક મોડ ચેક કરો
-            setInterval(updateDarkMode, 5 * 60 * 1000);
+            loadAccounts(); // Load existing accounts from server
+            setTodayDate(); // Set today's date in date input
+            validateTotalAmounts(); // Validate initial amounts
         };
 
         /**
-         * આજની તારીખ સેટ કરે છે
+         * Sets today's date in the date input field
          */
         function setTodayDate() {
             const today = new Date().toISOString().split('T')[0];
@@ -565,7 +135,8 @@
         }
 
         /**
-         * સર્વરથી એકાઉન્ટ્સ લોડ કરે છે
+         * Loads accounts from the server
+         * Uses Google Apps Script to fetch accounts
          */
         function loadAccounts() {
             google.script.run
@@ -581,12 +152,12 @@
         }
 
         /**
-         * એકાઉન્ટ ડ્રોપડાઉન્સ અપડેટ કરે છે
+         * Updates all account dropdowns with current account list
          */
         function updateAccountDropdowns() {
-            // બધી એન્ટ્રી માટે ડ્રોપડાઉન્સ અપડેટ કરે છે
+            // Update dropdowns for all entries
             for (let i = 1; i <= entryCount; i++) {
-                // ડેબિટ એકાઉન્ટ ડ્રોપડાઉન
+                // Update debit account dropdown
                 const debitSelect = document.getElementById(`debitAccount${i}`);
                 if (debitSelect) {
                     while (debitSelect.options.length > 2) debitSelect.remove(2);
@@ -595,7 +166,7 @@
                     });
                 }
 
-                // ક્રેડિટ એકાઉન્ટ ડ્રોપડાઉન
+                // Update credit account dropdown
                 const creditSelect = document.getElementById(`creditAccount${i}`);
                 if (creditSelect) {
                     while (creditSelect.options.length > 2) creditSelect.remove(2);
@@ -603,34 +174,25 @@
                         creditSelect.add(new Option(account, account));
                     });
                 }
-
-                // વધારાની એન્ટ્રી માટે એકાઉન્ટ ડ્રોપડાઉન
-                const accountSelect = document.getElementById(`account${i}`);
-                if (accountSelect) {
-                    while (accountSelect.options.length > 2) accountSelect.remove(2);
-                    accounts.forEach(account => {
-                        accountSelect.add(new Option(account, account));
-                    });
-                }
             }
         }
 
         /**
-         * એકાઉન્ટ સિલેક્ટ હેન્ડલર
-         * @param {HTMLSelectElement} select - સિલેક્ટ એલિમેન્ટ
-         * @param {string} type - એકાઉન્ટનો પ્રકાર ('debit' અથવા 'credit')
+         * Handles account selection in dropdowns
+         * @param {HTMLSelectElement} select - The select element that triggered the change
+         * @param {string} type - The type of account ('debit' or 'credit')
          */
         function handleAccountSelect(select, type) {
             if (select.value === 'new') {
                 currentAccountType = type;
                 showAddAccountModal(type);
-                select.value = ''; // રીસેટ ઓપ્શન
+                select.value = ''; // Reset selection
             }
         }
 
         /**
-         * નવું એકાઉન્ટ ઉમેરવાનું મોડલ બતાવે છે
-         * @param {string} type - એકાઉન્ટનો પ્રકાર ('debit' અથવા 'credit')
+         * Shows the modal for adding a new account
+         * @param {string} type - The type of account being added
          */
         function showAddAccountModal(type) {
             currentAccountType = type;
@@ -638,7 +200,7 @@
         }
 
         /**
-         * નવું એકાઉન્ટ ઉમેરવાનું મોડલ બંધ કરે છે
+         * Closes the add account modal
          */
         function closeAddAccountModal() {
             document.getElementById('addAccountModal').style.display = 'none';
@@ -646,7 +208,8 @@
         }
 
         /**
-         * નવું એકાઉન્ટ સર્વર પર ઉમેરે છે
+         * Adds a new account to the system
+         * Validates input and sends to server
          */
         function addNewAccount() {
             const accountName = document.getElementById('newAccountName').value.trim();
@@ -657,12 +220,13 @@
                 return;
             }
 
-            // Check if account already exists
+            // Check for duplicate accounts
             if (accounts.includes(accountName)) {
                 alert('આ એકાઉન્ટ પહેલાથી જ અસ્તિત્વમાં છે!');
                 return;
             }
 
+            // Send new account to server
             google.script.run
                 .withSuccessHandler(function() {
                     accounts.push(accountName);
@@ -678,47 +242,27 @@
         }
 
         /**
-         * મોડલ બહાર ક્લિક કરવાથી મોડલ બંધ થાય છે
-         */
-        window.onclick = function(event) {
-            const modal = document.getElementById('addAccountModal');
-            if (event.target == modal) {
-                closeAddAccountModal();
-            }
-        }
-
-        /**
-         * કુલ રકમો વેલિડેટ કરે છે
+         * Validates that total debit equals total credit
+         * Updates display and returns validation status
          */
         function validateTotalAmounts() {
             let totalDebit = 0;
             let totalCredit = 0;
             const totalError = document.getElementById('totalError');
             
-            // બધી એન્ટ્રીની રકમોનો સરવાળો
+            // Sum all entries
             for (let i = 1; i <= entryCount; i++) {
-                // મુખ્ય એન્ટ્રી માટે
                 const debitAmount = parseFloat(document.getElementById(`debitAmount${i}`)?.value) || 0;
                 const creditAmount = parseFloat(document.getElementById(`creditAmount${i}`)?.value) || 0;
                 totalDebit += debitAmount;
                 totalCredit += creditAmount;
-
-                // વધારાની એન્ટ્રી માટે
-                const entryType = document.getElementById(`entryType${i}`)?.value;
-                const amount = parseFloat(document.getElementById(`amount${i}`)?.value) || 0;
-                
-                if (entryType === 'debit') {
-                    totalDebit += amount;
-                } else if (entryType === 'credit') {
-                    totalCredit += amount;
-                }
             }
             
-            // કુલ રકમો અપડેટ કરો
+            // Update totals display
             document.getElementById('totalDebit').textContent = totalDebit.toFixed(2);
             document.getElementById('totalCredit').textContent = totalCredit.toFixed(2);
             
-            // વેલિડેશન ચેક કરો
+            // Validate and show error if needed
             if (totalDebit !== totalCredit) {
                 totalError.style.display = 'block';
                 return false;
@@ -729,79 +273,78 @@
         }
 
         /**
-         * નવી એન્ટ્રી ઉમેરે છે
+         * Adds a new entry section to the form
          */
         function addEntry() {
             const container = document.getElementById('entriesContainer');
             const count = ++entryCount;
             
             const newEntry = document.createElement('div');
-            newEntry.className = 'entry-section';
             newEntry.innerHTML = `
-                <div class="entry-header">
+                <div>
                     <h3>એન્ટ્રી #${count}</h3>
-                    <button type="button" class="remove-entry" onclick="removeEntry(this)">×</button>
+                    <button type="button" onclick="removeEntry(this)">×</button>
                 </div>
-                <div class="form-group">
-                    <label for="entryType${count}">એન્ટ્રી પ્રકાર:</label>
-                    <select id="entryType${count}" name="entryType${count}" required onchange="handleEntryTypeChange(this)">
-                        <option value="">પ્રકાર પસંદ કરો</option>
-                        <option value="debit">ડેબિટ</option>
-                        <option value="credit">ક્રેડિટ</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="account${count}">એકાઉન્ટ:</label>
-                    <select id="account${count}" name="account${count}" required onchange="handleAccountSelect(this, '')">
+                <div>
+                    <label for="debitAccount${count}">ડેબિટ એકાઉન્ટ:</label>
+                    <select id="debitAccount${count}" name="debitAccount${count}" required onchange="handleAccountSelect(this, 'debit')">
                         <option value="">એકાઉન્ટ પસંદ કરો</option>
-                        <option value="new" class="new-account-option">+ નવું એકાઉન્ટ</option>
+                        <option value="new">+ નવું એકાઉન્ટ</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label for="amount${count}">રકમ:</label>
-                    <input type="number" id="amount${count}" name="amount${count}" required min="0" step="0.01" onchange="validateTotalAmounts()">
+                <div>
+                    <label for="debitAmount${count}">ડેબિટ રકમ:</label>
+                    <input type="number" id="debitAmount${count}" name="debitAmount${count}" required min="0" step="0.01" onchange="validateTotalAmounts()">
                 </div>
-                <div class="form-group">
-                    <label for="description${count}">વર્ણન:</label>
-                    <input type="text" id="description${count}" name="description${count}" required>
+                <div>
+                    <label for="debitDescription${count}">ડેબિટ વર્ણન:</label>
+                    <input type="text" id="debitDescription${count}" name="debitDescription${count}" required>
+                </div>
+                <div>
+                    <label for="creditAccount${count}">ક્રેડિટ એકાઉન્ટ:</label>
+                    <select id="creditAccount${count}" name="creditAccount${count}" required onchange="handleAccountSelect(this, 'credit')">
+                        <option value="">એકાઉન્ટ પસંદ કરો</option>
+                        <option value="new">+ નવું એકાઉન્ટ</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="creditAmount${count}">ક્રેડિટ રકમ:</label>
+                    <input type="number" id="creditAmount${count}" name="creditAmount${count}" required min="0" step="0.01" onchange="validateTotalAmounts()">
+                </div>
+                <div>
+                    <label for="creditDescription${count}">ક્રેડિટ વર્ણન:</label>
+                    <input type="text" id="creditDescription${count}" name="creditDescription${count}" required>
                 </div>
             `;
             
             container.appendChild(newEntry);
             
-            // આ એન્ટ્રી માટે એકાઉન્ટ ડ્રોપડાઉન અપડેટ કરો
-            const accountSelect = document.getElementById(`account${count}`);
-            if (accountSelect) {
+            // Update account dropdowns for new entry
+            const debitSelect = document.getElementById(`debitAccount${count}`);
+            const creditSelect = document.getElementById(`creditAccount${count}`);
+            if (debitSelect && creditSelect) {
                 accounts.forEach(account => {
-                    accountSelect.add(new Option(account, account));
+                    debitSelect.add(new Option(account, account));
+                    creditSelect.add(new Option(account, account));
                 });
             }
         }
 
         /**
-         * એન્ટ્રી પ્રકાર બદલાય ત્યારે એકાઉન્ટ ડ્રોપડાઉન અપડેટ કરે છે
-         */
-        function handleEntryTypeChange(select) {
-            const entryId = select.id.replace('entryType', '');
-            const accountSelect = document.getElementById(`account${entryId}`);
-            if (accountSelect) {
-                accountSelect.value = ''; // Reset account selection
-            }
-        }
-
-        /**
-         * એન્ટ્રી દૂર કરે છે
-         * @param {HTMLElement} button - રિમૂવ બટન એલિમેન્ટ
+         * Removes an entry section from the form
+         * @param {HTMLElement} button - The remove button that triggered the removal
          */
         function removeEntry(button) {
-            const entry = button.closest('.entry-section');
+            const entry = button.closest('div');
             entry.remove();
             entryCount--;
             validateTotalAmounts();
         }
 
         /**
-         * ફોર્મ સબમિટ હેન્ડલર
+         * Handles form submission
+         * Validates totals and sends data to server
+         * @param {Event} e - The form submit event
          */
         function handleFormSubmit(e) {
             e.preventDefault();
@@ -813,9 +356,8 @@
             const form = e.target;
             const entries = [];
             
-            // બધી એન્ટ્રી કલેક્ટ કરો
+            // Collect all entries
             for (let i = 1; i <= entryCount; i++) {
-                // મુખ્ય એન્ટ્રી
                 const debitAccount = form[`debitAccount${i}`]?.value;
                 const debitAmount = form[`debitAmount${i}`]?.value;
                 const debitDescription = form[`debitDescription${i}`]?.value;
@@ -838,24 +380,9 @@
                         description: creditDescription
                     });
                 }
-
-                // વધારાની એન્ટ્રી
-                const entryType = form[`entryType${i}`]?.value;
-                const account = form[`account${i}`]?.value;
-                const amount = form[`amount${i}`]?.value;
-                const description = form[`description${i}`]?.value;
-                
-                if (entryType && account && amount && description) {
-                    entries.push({
-                        type: entryType,
-                        account: account,
-                        amount: amount,
-                        description: description
-                    });
-                }
             }
             
-            // સબમિટ કરવાનું કરો
+            // Submit entries to server
             google.script.run
                 .withSuccessHandler(function() {
                     alert('ફોર્મ સબમિટ કરવામાં સફળતાપૂર્વક થઈ ગયું!');
@@ -865,18 +392,6 @@
                     alert('ફોર્મ સબમિટ કરવામાં ભૂલ આવી!');
                 })
                 .submitEntries(entries);
-        }
-
-        /**
-         * ડાર્ક મોડ ચેક કરે છે
-         */
-        function updateDarkMode() {
-            const darkMode = localStorage.getItem('darkMode') === 'true';
-            if (darkMode) {
-                document.body.classList.add('dark-mode');
-            } else {
-                document.body.classList.remove('dark-mode');
-            }
         }
     </script>
 </body>
