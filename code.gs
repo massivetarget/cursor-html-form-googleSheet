@@ -1,6 +1,7 @@
 // स्प्रेडशीट ID को यहाँ रखें
 const SPREADSHEET_ID = '1Uva4DQWR-7RF9qIsCfDe6wZgjYzr9nC7ZoMEoEo1_uA';
 const SHEET_NAME = 'Entries';
+const ACCOUNTS_SHEET_NAME = 'CharOfAccounts';
 
 function doPost(e) {
   try {
@@ -52,7 +53,7 @@ function doPost(e) {
 
 function doGet() {
   return HtmlService.createHtmlOutputFromFile('index')
-      .setTitle('डबल एंट्री अकाउंटिंग फॉर्म')
+      .setTitle('ડબલ એન્ટ્રી એકાઉન્ટિંગ ફોર્મ')
       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
@@ -92,97 +93,50 @@ function processForm(data) {
   }
 } 
 
-//============================OLD code===================
-
-
-// // स्प्रेडशीट ID को यहाँ रखें
-// const SPREADSHEET_ID = '1Uva4DQWR-7RF9qIsCfDe6wZgjYzr9nC7ZoMEoEo1_uA';
-// const SHEET_NAME = 'Entries';
-
-// function doPost(e) {
-
-//     // var messages = ("this is log")
-//     var spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
-//     var sheet = spreadsheet.getSheetByName(SHEET_NAME);
-
-//     const spreadsheetID = spreadsheet.getId();
-//     const allSheet = spreadsheet.getSheets().map((sheet) => sheet.getName());
-//     const allSheetID = spreadsheet.getSheets().map((sheet) => sheet.getSheetId());    //    .getSheets().map((sheet) => sheet.getName());
-//     const allSheetName = spreadsheet.getSheets().map((sheet) => sheet.getSheetName());   // SheetId());
-//     const cellvalue = sheet.getDataRange().getValues();
-//     var data = JSON.parse(e);
-
-//     var sheetValues = {
-//       sheetname: sheet.getSheetName(),
-//       // sheets: spreadsheet.getSheets(),
-//       //sheetValue: sheet.getRange().getValues(),   //.getDataRange().getValues(),
-//       // sheetID: sheet.getSheetId()
-//     };
+// Get all accounts from CharOfAccounts sheet
+function getAccounts() {
+  try {
+    const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+    let accountsSheet = spreadsheet.getSheetByName(ACCOUNTS_SHEET_NAME);
     
-//     console.log({
-//       // // messages,
-//       // spreadsheetID,
-//       // allSheet,
-//       // allSheetID,
-//       // allSheetName
-//       // sheetValues
-//       // ssSts
-//       cellvalue,
-//       data
-//     });
-
-//           // हेडर रो जोड़ें
-//     sheet.getRange(1, 1, 1, 4).setValues([['Date', 'Type', 'Amount', 'Description']]);
-
-//   try {
-//     // JSON डेटा को पार्स करें
-//     var data = JSON.parse(e);
-//     // var data = JSON.parse(e.postData.contents);   old 
-
-//     var messages = ("this is log")
-
+    // If sheet doesn't exist, create it
+    if (!accountsSheet) {
+      accountsSheet = spreadsheet.insertSheet(ACCOUNTS_SHEET_NAME);
+      accountsSheet.getRange(1, 1, 1, 2).setValues([['Account Name', 'Account Type']]);
+      return [];
+    }
     
-//     // स्प्रेडशीट खोलें
+    // Get all account names
+    const data = accountsSheet.getDataRange().getValues();
+    const headers = data[0];
+    const accounts = data.slice(1).map(row => row[0]); // Get first column (Account Name)
+    
+    return accounts;
+  } catch (error) {
+    console.error('Error getting accounts:', error);
+    return [];
+  }
+}
 
+// Add new account to CharOfAccounts sheet
+function addNewAccount(accountName, accountType) {
+  try {
+    const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+    let accountsSheet = spreadsheet.getSheetByName(ACCOUNTS_SHEET_NAME);
     
-
-
-//     // यदि शीट मौजूद नहीं है तो नई बनाएं
-//     if (!sheet) {
-//       sheet = spreadsheet.insertSheet(SHEET_NAME);
-//       // हेडर रो जोड़ें
-//       sheet.getRange(1, 1, 1, 4).setValues([['Date', 'Type', 'Amount', 'Description']]);
-//     }
+    // If sheet doesn't exist, create it
+    if (!accountsSheet) {
+      accountsSheet = spreadsheet.insertSheet(ACCOUNTS_SHEET_NAME);
+      accountsSheet.getRange(1, 1, 1, 2).setValues([['Account Name', 'Account Type']]);
+    }
     
-//     // डेटा को एक पंक्ति में जोड़ें
-//     const newRow = [
-//       data.date,
-//       data.type,
-//       data.amount,
-//       data.description
-//     ];
+    // Add new account
+    const lastRow = Math.max(accountsSheet.getLastRow(), 1);
+    accountsSheet.getRange(lastRow + 1, 1, 1, 2).setValues([[accountName, accountType]]);
     
-//     // अंतिम पंक्ति में डेटा जोड़ें
-//     const lastRow = Math.max(sheet.getLastRow(), 1);
-//     sheet.getRange(lastRow + 1, 1, 1, newRow.length).setValues([newRow]);
-    
-//     // सफल प्रतिक्रिया भेजें
-//     return ContentService.createTextOutput(JSON.stringify({
-//       'status': 'success',
-//       'message': 'Data saved successfully'
-//     })).setMimeType(ContentService.MimeType.JSON);
-    
-//   } catch (error) {
-//     // त्रुटि प्रतिक्रिया भेजें
-//     return ContentService.createTextOutput(JSON.stringify({
-//       'status': 'error',
-//       'message': error.toString()
-//     })).setMimeType(ContentService.MimeType.JSON);
-//   }
-// }
-
-// function doGet() {
-//   return HtmlService.createHtmlOutputFromFile('index')
-//       .setTitle('डेबिट क्रेडिट एंट्री फॉर्म')
-//       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
-// } 
+    return true;
+  } catch (error) {
+    console.error('Error adding new account:', error);
+    throw new Error('Error adding new account: ' + error.toString());
+  }
+} 
