@@ -437,19 +437,29 @@
          * એકાઉન્ટ ડ્રોપડાઉન્સ અપડેટ કરે છે
          */
         function updateAccountDropdowns() {
-            // બધી એન્ટ્રી પેર્સ માટે ડ્રોપડાઉન્સ અપડેટ કરે છે
+            // ડેબિટ એન્ટ્રી માટે ડ્રોપડાઉન્સ અપડેટ કરે છે
             for (let i = 1; i <= debitEntryCount; i++) {
                 const debitSelect = document.getElementById(`debitAccount${i}`);
-                const creditSelect = document.getElementById(`creditAccount${i}`);
-                
-                if (debitSelect && creditSelect) {
+                if (debitSelect) {
                     // પહેલાના ઓપ્શન્સ ક્લિયર કરો (પહેલા બે ઓપ્શન્સ સિવાય)
                     while (debitSelect.options.length > 2) debitSelect.remove(2);
-                    while (creditSelect.options.length > 2) creditSelect.remove(2);
                     
                     // નવા એકાઉન્ટ ઓપ્શન્સ ઉમેરો
                     accounts.forEach(account => {
                         debitSelect.add(new Option(account, account));
+                    });
+                }
+            }
+
+            // ક્રેડિટ એન્ટ્રી માટે ડ્રોપડાઉન્સ અપડેટ કરે છે
+            for (let i = 1; i <= creditEntryCount; i++) {
+                const creditSelect = document.getElementById(`creditAccount${i}`);
+                if (creditSelect) {
+                    // પહેલાના ઓપ્શન્સ ક્લિયર કરો (પહેલા બે ઓપ્શન્સ સિવાય)
+                    while (creditSelect.options.length > 2) creditSelect.remove(2);
+                    
+                    // નવા એકાઉન્ટ ઓપ્શન્સ ઉમેરો
+                    accounts.forEach(account => {
                         creditSelect.add(new Option(account, account));
                     });
                 }
@@ -589,7 +599,18 @@
             `;
             
             container.appendChild(newEntry);
-            updateAccountDropdowns();
+            
+            // ફક્ત આ એન્ટ્રી માટે એકાઉન્ટ ડ્રોપડાઉન અપડેટ કરો
+            const select = document.getElementById(`${type}Account${count}`);
+            if (select) {
+                // પહેલાના ઓપ્શન્સ ક્લિયર કરો (પહેલા બે ઓપ્શન્સ સિવાય)
+                while (select.options.length > 2) select.remove(2);
+                
+                // નવા એકાઉન્ટ ઓપ્શન્સ ઉમેરો
+                accounts.forEach(account => {
+                    select.add(new Option(account, account));
+                });
+            }
         }
 
         /**
@@ -624,22 +645,34 @@
             
             // ડેબિટ એન્ટ્રી કલેક્ટ કરો
             for (let i = 1; i <= debitEntryCount; i++) {
-                entries.push({
-                    type: 'debit',
-                    account: form[`debitAccount${i}`].value,
-                    amount: form[`debitAmount${i}`].value,
-                    description: form[`debitDescription${i}`].value
-                });
+                const debitAccount = form[`debitAccount${i}`].value;
+                const debitAmount = form[`debitAmount${i}`].value;
+                const debitDescription = form[`debitDescription${i}`].value;
+                
+                if (debitAccount && debitAmount && debitDescription) {
+                    entries.push({
+                        type: 'debit',
+                        account: debitAccount,
+                        amount: debitAmount,
+                        description: debitDescription
+                    });
+                }
             }
             
             // ક્રેડિટ એન્ટ્રી કલેક્ટ કરો
             for (let i = 1; i <= creditEntryCount; i++) {
-                entries.push({
-                    type: 'credit',
-                    account: form[`creditAccount${i}`].value,
-                    amount: form[`creditAmount${i}`].value,
-                    description: form[`creditDescription${i}`].value
-                });
+                const creditAccount = form[`creditAccount${i}`].value;
+                const creditAmount = form[`creditAmount${i}`].value;
+                const creditDescription = form[`creditDescription${i}`].value;
+                
+                if (creditAccount && creditAmount && creditDescription) {
+                    entries.push({
+                        type: 'credit',
+                        account: creditAccount,
+                        amount: creditAmount,
+                        description: creditDescription
+                    });
+                }
             }
 
             const data = {

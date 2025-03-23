@@ -71,39 +71,55 @@ function doGet() {
  */
 function processForm(data) {
   try {
-    // સ્પ્રેડશીટ ખોલો
     const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
     let sheet = spreadsheet.getSheetByName(SHEET_NAME);
     
     // જો શીટ અસ્તિત્વમાં નથી તો નવી બનાવો
     if (!sheet) {
       sheet = spreadsheet.insertSheet(SHEET_NAME);
-      // હેડર રો ઉમેરો
-      sheet.getRange(1, 1, 1, 7).setValues([['Date', 'Debit Account', 'Debit Amount', 'Debit Description', 'Credit Account', 'Credit Amount', 'Credit Description']]);
+      // હેડર રો ઉમેરો - નવો બ્લેંક કૉલમ ઉમેર્યો
+      sheet.getRange(1, 1, 1, 8).setValues([['Date', 'Debit Account', 'Debit Amount', 'Debit Description', '', 'Credit Account', 'Credit Amount', 'Credit Description']]);
     }
     
-    // ડેટાને એક પંક્તિમાં ઉમેરો
-    const newRow = [
-      data.date,
-      data.debitAccount,
-      data.debitAmount,
-      data.debitDescription,
-      data.creditAccount,
-      data.creditAmount,
-      data.creditDescription
-    ];
+    // દરેક એન્ટ્રી માટે નવી પંક્તિ ઉમેરો
+    const entries = data.entries;
+    const rows = entries.map(entry => {
+      if (entry.type === 'debit') {
+        return [
+          data.date,
+          entry.account,
+          entry.amount,
+          entry.description,
+          '', // Blank column
+          '', // Empty credit fields
+          '',
+          ''
+        ];
+      } else {
+        return [
+          data.date,
+          '', // Empty debit fields
+          '',
+          '',
+          '', // Blank column
+          entry.account,
+          entry.amount,
+          entry.description
+        ];
+      }
+    });
     
     // છેલ્લી પંક્તિમાં ડેટા ઉમેરો
     const lastRow = Math.max(sheet.getLastRow(), 1);
-    sheet.getRange(lastRow + 1, 1, 1, newRow.length).setValues([newRow]);
+    sheet.getRange(lastRow + 1, 1, rows.length, 8).setValues(rows);
     
-    return true; // સફળતા સ્થિતિ
+    return true;
     
   } catch (error) {
     console.error('Error in processForm:', error);
     throw new Error('ડેટા સેવ કરવામાં ભૂલ: ' + error.toString());
   }
-} 
+}
 
 /**
  * CharOfAccounts શીટમાંથી બધા એકાઉન્ટ્સ મેળવે છે
