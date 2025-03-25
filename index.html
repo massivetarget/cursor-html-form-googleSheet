@@ -1,398 +1,185 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- Title of the form in Gujarati: "Double Entry Accounting Form" -->
-    <title>ડબલ એન્ટ્રી એકાઉન્ટિંગ ફોર્મ</title>
-    <!-- Viewport meta tag for responsive design -->
+    <title>डेबिट क्रेडिट एंट्री फॉर्म</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            min-height: 100vh;
+            margin: 0 auto;
+            padding: 30px 20px;
+            background-color: #f5f5f5;
+            display: flex;
+            align-items: center;
+        }
+
+        .container {
+            background-color: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 35px;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            color: #555;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 8px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            transition: border-color 0.3s ease;
+            height: 50px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 18px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* मोबाइल के लिए रिस्पॉन्सिव डिज़ाइन */
+        @media screen and (max-width: 480px) {
+            body {
+                padding: 20px 15px;
+            }
+
+            .container {
+                padding: 25px;
+            }
+
+            h2 {
+                font-size: 1.7rem;
+                margin-bottom: 30px;
+            }
+
+            .form-group {
+                margin-bottom: 25px;
+            }
+
+            input[type="text"],
+            input[type="number"],
+            input[type="date"],
+            select {
+                padding: 12px;
+                font-size: 16px; /* iOS के लिए ज़ूम को रोकने के लिए */
+                height: 45px;
+            }
+
+            button {
+                padding: 15px 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- Main container div -->
-    <div>
-        <!-- Main form with submit handler -->
-        <form id="doubleEntryForm" onsubmit="handleFormSubmit(event)">
-            <!-- Date input section -->
-            <div>
-                <label for="date">તારીખ:</label>
+    <div class="container">
+        <h2>डेबिट क्रेडिट एंट्री फॉर्म</h2>
+        <form id="debitCreditForm" onsubmit="handleFormSubmit(event)">
+            <div class="form-group">
+                <label for="date">दिनांक:</label>
                 <input type="date" id="date" name="date" required>
             </div>
-
-            <!-- Container for all accounting entries -->
-            <div id="entriesContainer">
-                <!-- Individual entry section -->
-                <div>
-                    <!-- Entry header with entry number and remove button -->
-                    <div>
-                        <h3>એન્ટ્રી #1</h3>
-                        <button type="button" onclick="removeEntry(this)">×</button>
-                    </div>
-                    <!-- Debit account selection -->
-                    <div>
-                        <label for="debitAccount1">ડેબિટ એકાઉન્ટ:</label>
-                        <select id="debitAccount1" name="debitAccount1" required onchange="handleAccountSelect(this, 'debit')">
-                            <option value="">એકાઉન્ટ પસંદ કરો</option>
-                            <option value="new">+ નવું એકાઉન્ટ</option>
-                        </select>
-                    </div>
-                    <!-- Debit amount input -->
-                    <div>
-                        <label for="debitAmount1">ડેબિટ રકમ:</label>
-                        <input type="number" id="debitAmount1" name="debitAmount1" required min="0" step="0.01" onchange="validateTotalAmounts()">
-                    </div>
-                    <!-- Debit description input -->
-                    <div>
-                        <label for="debitDescription1">ડેબિટ વર્ણન:</label>
-                        <input type="text" id="debitDescription1" name="debitDescription1" required>
-                    </div>
-                    <!-- Credit account selection -->
-                    <div>
-                        <label for="creditAccount1">ક્રેડિટ એકાઉન્ટ:</label>
-                        <select id="creditAccount1" name="creditAccount1" required onchange="handleAccountSelect(this, 'credit')">
-                            <option value="">એકાઉન્ટ પસંદ કરો</option>
-                            <option value="new">+ નવું એકાઉન્ટ</option>
-                        </select>
-                    </div>
-                    <!-- Credit amount input -->
-                    <div>
-                        <label for="creditAmount1">ક્રેડિટ રકમ:</label>
-                        <input type="number" id="creditAmount1" name="creditAmount1" required min="0" step="0.01" onchange="validateTotalAmounts()">
-                    </div>
-                    <!-- Credit description input -->
-                    <div>
-                        <label for="creditDescription1">ક્રેડિટ વર્ણન:</label>
-                        <input type="text" id="creditDescription1" name="creditDescription1" required>
-                    </div>
-                </div>
+            <div class="form-group">
+                <label for="type">प्रकार:</label>
+                <select id="type" name="type" required>
+                    <option value="debit">डेबिट</option>
+                    <option value="credit">क्रेडिट</option>
+                </select>
             </div>
-            <!-- Button to add new entry -->
-            <button type="button" onclick="addEntry()">+ નવી એન્ટ્રી ઉમેરો</button>
-
-            <!-- Total amounts section -->
-            <div>
-                <div>
-                    <h3>કુલ રકમો</h3>
-                    <p>કુલ ડેબિટ: <span id="totalDebit">0.00</span></p>
-                    <p>કુલ ક્રેડિટ: <span id="totalCredit">0.00</span></p>
-                </div>
-                <!-- Error message for unequal debit and credit -->
-                <p id="totalError">ડેબિટ અને ક્રેડિટની કુલ રકમ સમાન હોવી જોઈએ</p>
+            <div class="form-group">
+                <label for="amount">राशि:</label>
+                <input type="number" id="amount" name="amount" required>
             </div>
-
-            <!-- Form submit button -->
-            <button type="submit">સબમિટ કરો</button>
+            <div class="form-group">
+                <label for="description">विवरण:</label>
+                <input type="text" id="description" name="description" required>
+            </div>
+            <button type="submit">सबमिट करें</button>
         </form>
     </div>
 
-    <!-- Modal for adding new account -->
-    <div id="addAccountModal">
-        <div>
-            <!-- Close button -->
-            <span onclick="closeAddAccountModal()">&times;</span>
-            <h3>નવું એકાઉન્ટ ઉમેરો</h3>
-            <!-- New account name input -->
-            <div>
-                <label for="newAccountName">એકાઉન્ટ નામ:</label>
-                <input type="text" id="newAccountName" required>
-            </div>
-            <!-- Account type selection -->
-            <div>
-                <label for="newAccountType">એકાઉન્ટ પ્રકાર:</label>
-                <select id="newAccountType" required>
-                    <option value="Asset">સંપત્તિ</option>
-                    <option value="Liability">દેવું</option>
-                    <option value="Equity">ઇક્વિટી</option>
-                    <option value="Revenue">આવક</option>
-                    <option value="Expense">ખર્ચ</option>
-                </select>
-            </div>
-            <!-- Modal action buttons -->
-            <div>
-                <button type="button" onclick="closeAddAccountModal()">રદ કરો</button>
-                <button type="button" onclick="addNewAccount()">ઉમેરો</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // Variables for managing form state
-        let currentAccountType = ''; // Tracks whether we're adding a debit or credit account
-        let accounts = []; // Array to store all available accounts
-        let entryCount = 1; // Counter for number of entries
-
-        // Initialize form when page loads
-        window.onload = function() {
-            loadAccounts(); // Load existing accounts from server
-            setTodayDate(); // Set today's date in date input
-            validateTotalAmounts(); // Validate initial amounts
-        };
-
-        /**
-         * Sets today's date in the date input field
-         */
-        function setTodayDate() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('date').value = today;
-        }
-
-        /**
-         * Loads accounts from the server
-         * Uses Google Apps Script to fetch accounts
-         */
-        function loadAccounts() {
-            google.script.run
-                .withSuccessHandler(function(accountList) {
-                    accounts = accountList;
-                    updateAccountDropdowns();
-                })
-                .withFailureHandler(function(error) {
-                    console.error('Error loading accounts:', error);
-                    alert('એકાઉન્ટ્સ લોડ કરવામાં ભૂલ આવી!');
-                })
-                .getAccounts();
-        }
-
-        /**
-         * Updates all account dropdowns with current account list
-         */
-        function updateAccountDropdowns() {
-            // Update dropdowns for all entries
-            for (let i = 1; i <= entryCount; i++) {
-                // Update debit account dropdown
-                const debitSelect = document.getElementById(`debitAccount${i}`);
-                if (debitSelect) {
-                    while (debitSelect.options.length > 2) debitSelect.remove(2);
-                    accounts.forEach(account => {
-                        debitSelect.add(new Option(account, account));
-                    });
-                }
-
-                // Update credit account dropdown
-                const creditSelect = document.getElementById(`creditAccount${i}`);
-                if (creditSelect) {
-                    while (creditSelect.options.length > 2) creditSelect.remove(2);
-                    accounts.forEach(account => {
-                        creditSelect.add(new Option(account, account));
-                    });
-                }
-            }
-        }
-
-        /**
-         * Handles account selection in dropdowns
-         * @param {HTMLSelectElement} select - The select element that triggered the change
-         * @param {string} type - The type of account ('debit' or 'credit')
-         */
-        function handleAccountSelect(select, type) {
-            if (select.value === 'new') {
-                currentAccountType = type;
-                showAddAccountModal(type);
-                select.value = ''; // Reset selection
-            }
-        }
-
-        /**
-         * Shows the modal for adding a new account
-         * @param {string} type - The type of account being added
-         */
-        function showAddAccountModal(type) {
-            currentAccountType = type;
-            document.getElementById('addAccountModal').style.display = 'block';
-        }
-
-        /**
-         * Closes the add account modal
-         */
-        function closeAddAccountModal() {
-            document.getElementById('addAccountModal').style.display = 'none';
-            document.getElementById('newAccountName').value = '';
-        }
-
-        /**
-         * Adds a new account to the system
-         * Validates input and sends to server
-         */
-        function addNewAccount() {
-            const accountName = document.getElementById('newAccountName').value.trim();
-            const accountType = document.getElementById('newAccountType').value;
-
-            if (!accountName) {
-                alert('કૃપા કરી એકાઉન્ટ નામ દાખલ કરો');
-                return;
-            }
-
-            // Check for duplicate accounts
-            if (accounts.includes(accountName)) {
-                alert('આ એકાઉન્ટ પહેલાથી જ અસ્તિત્વમાં છે!');
-                return;
-            }
-
-            // Send new account to server
-            google.script.run
-                .withSuccessHandler(function() {
-                    accounts.push(accountName);
-                    updateAccountDropdowns();
-                    closeAddAccountModal();
-                    alert('એકાઉન્ટ સફળતાપૂર્વક ઉમેરાયું!');
-                })
-                .withFailureHandler(function(error) {
-                    console.error('Error adding account:', error);
-                    alert('એકાઉન્ટ ઉમેરવામાં ભૂલ આવી!');
-                })
-                .addNewAccount(accountName, accountType);
-        }
-
-        /**
-         * Validates that total debit equals total credit
-         * Updates display and returns validation status
-         */
-        function validateTotalAmounts() {
-            let totalDebit = 0;
-            let totalCredit = 0;
-            const totalError = document.getElementById('totalError');
-            
-            // Sum all entries
-            for (let i = 1; i <= entryCount; i++) {
-                const debitAmount = parseFloat(document.getElementById(`debitAmount${i}`)?.value) || 0;
-                const creditAmount = parseFloat(document.getElementById(`creditAmount${i}`)?.value) || 0;
-                totalDebit += debitAmount;
-                totalCredit += creditAmount;
-            }
-            
-            // Update totals display
-            document.getElementById('totalDebit').textContent = totalDebit.toFixed(2);
-            document.getElementById('totalCredit').textContent = totalCredit.toFixed(2);
-            
-            // Validate and show error if needed
-            if (totalDebit !== totalCredit) {
-                totalError.style.display = 'block';
-                return false;
-            } else {
-                totalError.style.display = 'none';
-                return true;
-            }
-        }
-
-        /**
-         * Adds a new entry section to the form
-         */
-        function addEntry() {
-            const container = document.getElementById('entriesContainer');
-            const count = ++entryCount;
-            
-            const newEntry = document.createElement('div');
-            newEntry.innerHTML = `
-                <div>
-                    <h3>એન્ટ્રી #${count}</h3>
-                    <button type="button" onclick="removeEntry(this)">×</button>
-                </div>
-                <div>
-                    <label for="debitAccount${count}">ડેબિટ એકાઉન્ટ:</label>
-                    <select id="debitAccount${count}" name="debitAccount${count}" required onchange="handleAccountSelect(this, 'debit')">
-                        <option value="">એકાઉન્ટ પસંદ કરો</option>
-                        <option value="new">+ નવું એકાઉન્ટ</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="debitAmount${count}">ડેબિટ રકમ:</label>
-                    <input type="number" id="debitAmount${count}" name="debitAmount${count}" required min="0" step="0.01" onchange="validateTotalAmounts()">
-                </div>
-                <div>
-                    <label for="debitDescription${count}">ડેબિટ વર્ણન:</label>
-                    <input type="text" id="debitDescription${count}" name="debitDescription${count}" required>
-                </div>
-                <div>
-                    <label for="creditAccount${count}">ક્રેડિટ એકાઉન્ટ:</label>
-                    <select id="creditAccount${count}" name="creditAccount${count}" required onchange="handleAccountSelect(this, 'credit')">
-                        <option value="">એકાઉન્ટ પસંદ કરો</option>
-                        <option value="new">+ નવું એકાઉન્ટ</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="creditAmount${count}">ક્રેડિટ રકમ:</label>
-                    <input type="number" id="creditAmount${count}" name="creditAmount${count}" required min="0" step="0.01" onchange="validateTotalAmounts()">
-                </div>
-                <div>
-                    <label for="creditDescription${count}">ક્રેડિટ વર્ણન:</label>
-                    <input type="text" id="creditDescription${count}" name="creditDescription${count}" required>
-                </div>
-            `;
-            
-            container.appendChild(newEntry);
-            
-            // Update account dropdowns for new entry
-            const debitSelect = document.getElementById(`debitAccount${count}`);
-            const creditSelect = document.getElementById(`creditAccount${count}`);
-            if (debitSelect && creditSelect) {
-                accounts.forEach(account => {
-                    debitSelect.add(new Option(account, account));
-                    creditSelect.add(new Option(account, account));
-                });
-            }
-        }
-
-        /**
-         * Removes an entry section from the form
-         * @param {HTMLElement} button - The remove button that triggered the removal
-         */
-        function removeEntry(button) {
-            const entry = button.closest('div');
-            entry.remove();
-            entryCount--;
-            validateTotalAmounts();
-        }
-
-        /**
-         * Handles form submission
-         * Validates totals and sends data to server
-         * @param {Event} e - The form submit event
-         */
         function handleFormSubmit(e) {
             e.preventDefault();
-            
-            if (!validateTotalAmounts()) {
-                return;
-            }
-
             const form = e.target;
-            const date = form.date.value;
-            const entries = [];
-            
-            // Collect all entries
-            for (let i = 1; i <= entryCount; i++) {
-                const debitAccount = form[`debitAccount${i}`]?.value;
-                const debitAmount = form[`debitAmount${i}`]?.value;
-                const debitDescription = form[`debitDescription${i}`]?.value;
-                const creditAccount = form[`creditAccount${i}`]?.value;
-                const creditAmount = form[`creditAmount${i}`]?.value;
-                const creditDescription = form[`creditDescription${i}`]?.value;
-                
-                if (debitAccount && debitAmount && debitDescription && 
-                    creditAccount && creditAmount && creditDescription) {
-                    entries.push({
-                        date: date,
-                        debitAccount: debitAccount,
-                        debitAmount: debitAmount,
-                        debitDescription: debitDescription,
-                        creditAccount: creditAccount,
-                        creditAmount: creditAmount,
-                        creditDescription: creditDescription
-                    });
-                }
-            }
-            
-            // Submit entries to server
+            const data = {
+                date: form.date.value,
+                type: form.type.value,
+                amount: form.amount.value,
+                description: form.description.value
+            };
+
+            // सबमिट बटन को डिसेबल करें
+            const submitButton = form.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = 'सबमिट हो रहा है...';
+
             google.script.run
                 .withSuccessHandler(function() {
-                    alert('ફોર્મ સબમિટ કરવામાં સફળતાપૂર્વક થઈ ગયું!');
-                    form.reset(); // Reset form after successful submission
-                    setTodayDate(); // Set today's date again
+                    alert('डेटा सफलतापूर्वक सेव किया गया!');
+                    form.reset();
+                    // सबमिट बटन को री-एनेबल करें
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'सबमिट करें';
                 })
                 .withFailureHandler(function(error) {
-                    console.error('Error submitting form:', error);
-                    alert('ફોર્મ સબમિટ કરવામાં ભૂલ આવી!');
+                    console.error('Error:', error);
+                    alert('एक त्रुटि हुई! कृपया पुनः प्रयास करें।');
+                    // सबमिट बटन को री-एनेबल करें
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'सबमिट करें';
                 })
-                .processForm({ entries: entries });
+                .processForm(data);
         }
     </script>
 </body>
-</html>
+</html> 
