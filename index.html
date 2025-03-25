@@ -123,20 +123,27 @@
 
         // એકાઉન્ટ ટાઇપ્સ લોડ કરવા ફંક્શન
         function loadAccountTypes() {
+            console.log('Loading account types...');
             google.script.run
                 .withSuccessHandler(function(subAccounts) {
-                    const select = document.getElementById('newAccountType');
-                    select.innerHTML = '<option value="">એકાઉન્ટ પ્રકાર પસંદ કરો</option>';
-                    subAccounts.forEach(account => {
-                        const option = document.createElement('option');
-                        option.value = account;
-                        option.textContent = account;
-                        select.appendChild(option);
-                    });
+                    console.log('Received sub accounts:', subAccounts);
+                    const accountTypeSelect = document.getElementById('newAccountType');
+                    accountTypeSelect.innerHTML = '<option value="">એકાઉન્ટ પ્રકાર પસંદ કરો</option>';
+                    
+                    if (subAccounts && subAccounts.length > 0) {
+                        subAccounts.forEach(account => {
+                            const option = document.createElement('option');
+                            option.value = account;
+                            option.textContent = account;
+                            accountTypeSelect.appendChild(option);
+                        });
+                    } else {
+                        console.log('No sub accounts found');
+                    }
                 })
                 .withFailureHandler(function(error) {
-                    console.error('Error:', error);
-                    alert('એકાઉન્ટ ટાઇપ્સ લોડ કરવામાં ભૂલ આવી');
+                    console.error('Error loading account types:', error);
+                    alert('એકાઉન્ટ પ્રકાર લોડ કરવામાં ભૂલ: ' + error);
                 })
                 .getSubAccounts();
         }

@@ -1,206 +1,208 @@
-// स्प्रेडशीट ID को यहाँ रखें
-const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID';
+// स्प्रेडशीट कॉन्फ़िगरेशन
+const SPREADSHEET_ID = '1Srh4YWV7preBHJaFzO0L32iseTeJzEQ9u9lNfiHEXDE';
 const SHEET_NAME = 'Entries';
 const ACCOUNTS_SHEET_NAME = 'CharOfAccounts';
 
 /**
- * POST रिक्वेस्टने हैंडल करें
- * फॉर्म डेटाको स्प्रेडशीटमें सेव करें
- */
-function doPost(e) {
-  try {
-    // Parse JSON data
-    const data = JSON.parse(e);
-    console.log(data);
-    
-    // Open spreadsheet
-    const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
-    let sheet = spreadsheet.getSheetByName(SHEET_NAME);
-    
-    // If sheet doesn't exist, create it
-    if (!sheet) {
-      sheet = spreadsheet.insertSheet(SHEET_NAME);
-      // Add header row with new column structure
-      sheet.getRange(1, 1, 1, 6).setValues([['ID', 'Date', 'Account', 'Description', 'Debit', 'Credit']]);
-    }
-    
-    // Create rows for both debit and credit entries
-    const rows = [
-      // Debit entry
-      [
-        Utilities.getUuid(), // Generate unique ID
-        data.date,
-        data.debitAccount,
-        data.debitDescription,
-        data.debitAmount,
-        '' // Empty credit amount
-      ],
-      // Credit entry
-      [
-        Utilities.getUuid(), // Generate unique ID
-        data.date,
-        data.creditAccount,
-        data.creditDescription,
-        '', // Empty debit amount
-        data.creditAmount
-      ]
-    ];
-    
-    // Add data to the last row
-    const lastRow = Math.max(sheet.getLastRow(), 1);
-    sheet.getRange(lastRow + 1, 1, rows.length, 6).setValues(rows);
-    
-    // Return success message
-    return ContentService.createTextOutput(JSON.stringify({
-      'status': 'success',
-      'message': 'Data saved successfully'
-    })).setMimeType(ContentService.MimeType.JSON);
-    
-  } catch (error) {
-    // Return error message
-    return ContentService.createTextOutput(JSON.stringify({
-      'status': 'error',
-      'message': error.toString()
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-/**
- * GET रिक्वेस्टने हैंडल करें
- * HTML फॉर्म वापस भेजें
+ * GET रिक्वेस्ट हैंडलर
  */
 function doGet() {
   return HtmlService.createHtmlOutputFromFile('index')
-      .setTitle('डेबिट क्रेडिट एंट्री फॉर्म')
+      .setTitle('ડબલ એન્ટ્રી એકાઉન્ટિંગ ફોર્મ')
       .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
 
 /**
- * फॉर्म डेटाको प्रोसेस करें और स्प्रेडशीटमें सेव करें
- * @param {Object} data - फॉर्म डेटा
- * @return {boolean} - सफलता स्थिति
+ * फॉर्म डेटा प्रोसेस करें
  */
 function processForm(data) {
   try {
-    // स्प्रेडशीट खोलें
+    console.log('Processing form data:', data);
     const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
     let sheet = spreadsheet.getSheetByName(SHEET_NAME);
     
-    // यदि शीट मौजूद नहीं है तो नई बनाएं
     if (!sheet) {
       sheet = spreadsheet.insertSheet(SHEET_NAME);
-      // हेडर रो जोड़ें
-      sheet.getRange(1, 1, 1, 4).setValues([['Date', 'Type', 'Amount', 'Description']]);
+      sheet.getRange(1, 1, 1, 6).setValues([['ID', 'Date', 'Account', 'Description', 'Debit', 'Credit']]);
     }
     
-    // डेटा को एक पंक्ति में जोड़ें
-    const newRow = [
-      data.date,
-      data.type,
-      data.amount,
-      data.description
-    ];
+    const entries = data.entries;
+    console.log('Processing entries:', entries);
     
-    // अंतिम पंक्ति में डेटा जोड़ें
+    // डेबिट और क्रेडिट अमाउंट की मैचिंग चेक करें
+    let totalDebit = 0;
+    let totalCredit = 0;
+    
+    entries.forEach(entry => {
+      const debitAmount = parseFloat(entry.debitAmount) || 0;
+      const creditAmount = parseFloat(entry.creditAmount) || 0;
+      
+      if (isNaN(debitAmount) || isNaN(creditAmount)) {
+        throw new Error('અમાઉન્ટ માન્ય નથી');
+      }
+      
+      totalDebit += debitAmount;
+      totalCredit += creditAmount;
+    });
+    
+    if (Math.abs(totalDebit - totalCredit) > 0.01) { // 0.01 की टॉलरेंस
+      throw new Error(`ડેબિટ અને ક્રેડિટ અમાઉન્ટ મેચ નથી થતા. ડેબિટ: ${totalDebit}, ક્રેડિટ: ${totalCredit}`);
+    }
+    
+    // पहले सभी डेटा को एकत्रित करें
+    const rows = [];
+    entries.forEach((entry, index) => {
+      const entryId = `ENT${Date.now()}_${index + 1}`;
+      
+      // डेबिट एंट्री
+      rows.push([
+        entryId,
+        entry.date,
+        entry.debitAccount,
+        entry.debitDescription,
+        entry.debitAmount,
+        '' // क्रेडिट खाली
+      ]);
+      
+      // क्रेडिट एंट्री
+      rows.push([
+        entryId,
+        entry.date,
+        entry.creditAccount,
+        entry.creditDescription,
+        '', // डेबिट खाली
+        entry.creditAmount
+      ]);
+    });
+    
+    console.log('Prepared rows:', rows);
+    
+    // अब सभी डेटा को एक साथ लिखें
     const lastRow = Math.max(sheet.getLastRow(), 1);
-    sheet.getRange(lastRow + 1, 1, 1, newRow.length).setValues([newRow]);
+    sheet.getRange(lastRow + 1, 1, rows.length, 6).setValues(rows);
     
-    return true; // सफलता का संकेत
-    
+    console.log('Data written successfully');
+    return true;
   } catch (error) {
     console.error('Error in processForm:', error);
-    throw new Error('डेटा सेव करने में त्रुटि: ' + error.toString());
+    throw new Error('ડેટા સેવ કરવામાં ભૂલ: ' + error.toString());
   }
 }
 
 /**
- * CharOfAccounts शीटसे सभी खाते प्राप्त करें
- * @return {Array} - खाता नामोंकी सूची
+ * सभी अकाउंट्स प्राप्त करें
  */
 function getAccounts() {
   try {
+    console.log('Starting getAccounts function');
     const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
-    let accountsSheet = spreadsheet.getSheetByName(ACCOUNTS_SHEET_NAME);
+    console.log('Spreadsheet opened successfully');
     
-    // यदि शीट मौजूद नहीं है तो नई बनाएं
-    if (!accountsSheet) {
-      accountsSheet = spreadsheet.insertSheet(ACCOUNTS_SHEET_NAME);
-      accountsSheet.getRange(1, 1, 1, 2).setValues([['Account Name', 'Account Type']]);
+    const sheet = spreadsheet.getSheetByName(ACCOUNTS_SHEET_NAME);
+    if (!sheet) {
+      console.error('CharOfAccounts sheet not found');
       return [];
     }
+    console.log('Sheet found successfully');
     
-    // सभी खाता नाम प्राप्त करें
-    const data = accountsSheet.getDataRange().getValues();
-    const headers = data[0];
-    const accounts = data.slice(1).map(row => row[0]); // पहला कॉलम (खाता नाम) प्राप्त करें
+    const data = sheet.getDataRange().getValues();
+    console.log('Data retrieved:', data);
     
+    const accounts = data.slice(1)
+      .map(row => row[0])
+      .filter(account => account && account.trim() !== '');
+    
+    console.log('Filtered accounts:', accounts);
     return accounts;
   } catch (error) {
-    console.error('Error getting accounts:', error);
+    console.error('Error in getAccounts:', error);
     return [];
   }
 }
 
 /**
- * CharOfAccounts शीटमें नया खाता जोड़ें
- * @param {string} accountName - खाताका नाम
- * @param {string} accountType - खाताका प्रकार
- * @return {boolean} - सफलता स्थिति
+ * सब अकाउंट्स प्राप्त करें
  */
-function addNewAccount(accountName, accountType) {
-  try {
-    const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
-    let accountsSheet = spreadsheet.getSheetByName(ACCOUNTS_SHEET_NAME);
-    
-    // यदि शीट मौजूद नहीं है तो नई बनाएं
-    if (!accountsSheet) {
-      accountsSheet = spreadsheet.insertSheet(ACCOUNTS_SHEET_NAME);
-      accountsSheet.getRange(1, 1, 1, 2).setValues([['Account Name', 'Account Type']]);
-    }
-    
-    // नया खाता जोड़ें
-    const lastRow = Math.max(accountsSheet.getLastRow(), 1);
-    accountsSheet.getRange(lastRow + 1, 1, 1, 2).setValues([[accountName, accountType]]);
-    
-    return true;
-  } catch (error) {
-    console.error('Error adding new account:', error);
-    throw new Error('नया खाता जोड़ने में त्रुटि: ' + error.toString());
-  }
-}
-
 function getSubAccounts() {
   try {
+    console.log('Starting getSubAccounts function');
     const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
-    const sheet = spreadsheet.getSheetByName(ACCOUNTS_SHEET_NAME);
+    console.log('Spreadsheet opened successfully');
     
+    const sheet = spreadsheet.getSheetByName(ACCOUNTS_SHEET_NAME);
     if (!sheet) {
       console.error('CharOfAccounts sheet not found');
       return [];
     }
+    console.log('Sheet found successfully');
     
     const data = sheet.getDataRange().getValues();
     const headers = data[0];
-    const subAccounts = [];
+    console.log('All column headers:', headers);
     
-    // Find the index of "Sub Accounts" column
-    const subAccountsIndex = headers.findIndex(header => header === 'Sub Accounts');
+    // सभी कॉलम नेम्स को लॉग करें
+    headers.forEach((header, index) => {
+      console.log(`Column ${index}: ${header}`);
+    });
+    
+    // "Sub Accounts" कॉलम को खोजें
+    const subAccountsIndex = headers.findIndex(header => 
+      header.toLowerCase().includes('sub') && 
+      header.toLowerCase().includes('account')
+    );
+    
+    console.log('Found sub accounts column index:', subAccountsIndex);
+    
     if (subAccountsIndex === -1) {
-      console.error('Sub Accounts column not found');
+      console.error('Sub Accounts column not found. Available columns:', headers);
       return [];
     }
     
-    // Get unique values from Sub Accounts column
-    for (let i = 1; i < data.length; i++) {
-      const subAccount = data[i][subAccountsIndex];
-      if (subAccount && !subAccounts.includes(subAccount)) {
-        subAccounts.push(subAccount);
+    // सभी सब-अकाउंट्स को एकत्रित करें
+    const subAccounts = new Set();
+    data.slice(1).forEach(row => {
+      const subAccount = row[subAccountsIndex];
+      if (subAccount && subAccount.trim() !== '') {
+        subAccounts.add(subAccount.trim());
       }
-    }
+    });
     
-    return subAccounts;
+    const uniqueSubAccounts = Array.from(subAccounts);
+    console.log('Found unique sub accounts:', uniqueSubAccounts);
+    return uniqueSubAccounts;
   } catch (error) {
     console.error('Error in getSubAccounts:', error);
     return [];
   }
 }
+
+/**
+ * नया अकाउंट जोड़ें
+ */
+function addAccount(name, type) {
+  try {
+    const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+    let sheet = spreadsheet.getSheetByName(ACCOUNTS_SHEET_NAME);
+    
+    if (!sheet) {
+      sheet = spreadsheet.insertSheet(ACCOUNTS_SHEET_NAME);
+      sheet.getRange(1, 1, 1, 2).setValues([['Account Name', 'Account Type']]);
+    }
+    
+    // चेक करें कि अकाउंट पहले से मौजूद तो नहीं है
+    const data = sheet.getDataRange().getValues();
+    const existingAccounts = data.slice(1).map(row => row[0]);
+    
+    if (existingAccounts.includes(name)) {
+      throw new Error('આ એકાઉન્ટ પહેલાથી જ અસ્તિત્વ ધરાવે છે');
+    }
+    
+    const lastRow = Math.max(sheet.getLastRow(), 1);
+    sheet.getRange(lastRow + 1, 1, 1, 2).setValues([[name, type]]);
+    
+    return true;
+  } catch (error) {
+    console.error('Error adding new account:', error);
+    throw error;
+  }
+} 
