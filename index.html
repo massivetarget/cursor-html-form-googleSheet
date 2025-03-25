@@ -1,85 +1,195 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <!-- Title of the form in Gujarati: "Double Entry Accounting Form" -->
     <title>ડબલ એન્ટ્રી એકાઉન્ટિંગ ફોર્મ</title>
     <!-- Viewport meta tag for responsive design -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .entriesContainer1 {
+            display: flex;
+            justify-content: space-between;
+            flex-flow: wrap;
+            background-color: DodgerBlue;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .debitSection,
+        .creditSection {
+            flex:auto;
+            min-width: 300px;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .debitSection {
+            background-color: #007bff;
+        }
+
+        .creditSection {
+            background-color: #007bf1;
+        }
+
+        .addEntryButton {
+            width: 100%;
+            text-align: center;
+            padding: 10px;
+            background-color: #007bf2;
+            border-radius: 5px;
+        }
+
+        .totalAmounts {
+            width: 100%;
+            padding: 15px;
+            background-color: #007bf3;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #totalError {
+            color: red;
+            text-align: center;
+            display: none;
+        }
+
+        #addAccountModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        #addAccountModal>div {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 5px;
+        }
+    </style>
+
+
 </head>
+
 <body>
     <!-- Main container div -->
     <div>
         <!-- Main form with submit handler -->
         <form id="doubleEntryForm" onsubmit="handleFormSubmit(event)">
             <!-- Date input section -->
-            <div>
+            <div class="form-group">
                 <label for="date">તારીખ:</label>
                 <input type="date" id="date" name="date" required>
             </div>
 
             <!-- Container for all accounting entries -->
-            <div id="entriesContainer">
-                <!-- Individual entry section -->
-                <div>
-                    <!-- Entry header with entry number and remove button -->
-                    <div>
-                        <h3>એન્ટ્રી #1</h3>
-                        <button type="button" onclick="removeEntry(this)">×</button>
-                    </div>
-                    <!-- Debit account selection -->
-                    <div>
+            <!-- Entry header with entry number and remove button -->
+            <div class="form-group">
+                <h3>એન્ટ્રી #1</h3>
+                <button type="button" onclick="removeEntry(this)">×</button>
+            </div>
+            <!-- Individual entry section -->
+            <div class="entriesContainer1">
+
+                <!-- Debit account selection -->
+                <div class="debitSection">
+                    <div class="form-group">
                         <label for="debitAccount1">ડેબિટ એકાઉન્ટ:</label>
-                        <select id="debitAccount1" name="debitAccount1" required onchange="handleAccountSelect(this, 'debit')">
+                        <select id="debitAccount1" name="debitAccount1" required
+                            onchange="handleAccountSelect(this, 'debit')">
                             <option value="">એકાઉન્ટ પસંદ કરો</option>
                             <option value="new">+ નવું એકાઉન્ટ</option>
                         </select>
                     </div>
                     <!-- Debit amount input -->
-                    <div>
+                    <div class="form-group">
                         <label for="debitAmount1">ડેબિટ રકમ:</label>
-                        <input type="number" id="debitAmount1" name="debitAmount1" required min="0" step="0.01" onchange="validateTotalAmounts()">
+                        <input type="number" id="debitAmount1" name="debitAmount1" required min="0" step="0.01"
+                            onchange="validateTotalAmounts()">
                     </div>
                     <!-- Debit description input -->
-                    <div>
+                    <div class="form-group">
                         <label for="debitDescription1">ડેબિટ વર્ણન:</label>
                         <input type="text" id="debitDescription1" name="debitDescription1" required>
                     </div>
-                    <!-- Credit account selection -->
-                    <div>
+                </div>
+                <!-- Credit account selection -->
+                <div class="creditSection">
+                    <div class="form-group">
                         <label for="creditAccount1">ક્રેડિટ એકાઉન્ટ:</label>
-                        <select id="creditAccount1" name="creditAccount1" required onchange="handleAccountSelect(this, 'credit')">
+                        <select id="creditAccount1" name="creditAccount1" required
+                            onchange="handleAccountSelect(this, 'credit')">
                             <option value="">એકાઉન્ટ પસંદ કરો</option>
                             <option value="new">+ નવું એકાઉન્ટ</option>
                         </select>
                     </div>
                     <!-- Credit amount input -->
-                    <div>
+                    <div class="form-group">
                         <label for="creditAmount1">ક્રેડિટ રકમ:</label>
-                        <input type="number" id="creditAmount1" name="creditAmount1" required min="0" step="0.01" onchange="validateTotalAmounts()">
+                        <input type="number" id="creditAmount1" name="creditAmount1" required min="0" step="0.01"
+                            onchange="validateTotalAmounts()">
                     </div>
                     <!-- Credit description input -->
-                    <div>
+                    <div class="form-group">
                         <label for="creditDescription1">ક્રેડિટ વર્ણન:</label>
                         <input type="text" id="creditDescription1" name="creditDescription1" required>
                     </div>
                 </div>
-            </div>
-            <!-- Button to add new entry -->
-            <button type="button" onclick="addEntry()">+ નવી એન્ટ્રી ઉમેરો</button>
+                <!-- Button to add new entry -->
+                <div class="addEntryButton">
+                    <button type="button" onclick="addEntry()">+ નવી એન્ટ્રી ઉમેરો</button>
+                </div>
 
-            <!-- Total amounts section -->
-            <div>
-                <div>
+                <!-- Total amounts section -->
+                <div class="totalAmounts">
                     <h3>કુલ રકમો</h3>
                     <p>કુલ ડેબિટ: <span id="totalDebit">0.00</span></p>
                     <p>કુલ ક્રેડિટ: <span id="totalCredit">0.00</span></p>
                 </div>
                 <!-- Error message for unequal debit and credit -->
                 <p id="totalError">ડેબિટ અને ક્રેડિટની કુલ રકમ સમાન હોવી જોઈએ</p>
+
             </div>
 
             <!-- Form submit button -->
             <button type="submit">સબમિટ કરો</button>
+
         </form>
     </div>
 
@@ -90,12 +200,12 @@
             <span onclick="closeAddAccountModal()">&times;</span>
             <h3>નવું એકાઉન્ટ ઉમેરો</h3>
             <!-- New account name input -->
-            <div>
+            <div class="form-group">
                 <label for="newAccountName">એકાઉન્ટ નામ:</label>
                 <input type="text" id="newAccountName" required>
             </div>
             <!-- Account type selection -->
-            <div>
+            <div class="form-group">
                 <label for="newAccountType">એકાઉન્ટ પ્રકાર:</label>
                 <select id="newAccountType" required>
                     <option value="Asset">સંપત્તિ</option>
@@ -120,7 +230,7 @@
         let entryCount = 1; // Counter for number of entries
 
         // Initialize form when page loads
-        window.onload = function() {
+        window.onload = function () {
             loadAccounts(); // Load existing accounts from server
             setTodayDate(); // Set today's date in date input
             validateTotalAmounts(); // Validate initial amounts
@@ -140,11 +250,11 @@
          */
         function loadAccounts() {
             google.script.run
-                .withSuccessHandler(function(accountList) {
+                .withSuccessHandler(function (accountList) {
                     accounts = accountList;
                     updateAccountDropdowns();
                 })
-                .withFailureHandler(function(error) {
+                .withFailureHandler(function (error) {
                     console.error('Error loading accounts:', error);
                     alert('એકાઉન્ટ્સ લોડ કરવામાં ભૂલ આવી!');
                 })
@@ -228,13 +338,13 @@
 
             // Send new account to server
             google.script.run
-                .withSuccessHandler(function() {
+                .withSuccessHandler(function () {
                     accounts.push(accountName);
                     updateAccountDropdowns();
                     closeAddAccountModal();
                     alert('એકાઉન્ટ સફળતાપૂર્વક ઉમેરાયું!');
                 })
-                .withFailureHandler(function(error) {
+                .withFailureHandler(function (error) {
                     console.error('Error adding account:', error);
                     alert('એકાઉન્ટ ઉમેરવામાં ભૂલ આવી!');
                 })
@@ -249,7 +359,7 @@
             let totalDebit = 0;
             let totalCredit = 0;
             const totalError = document.getElementById('totalError');
-            
+
             // Sum all entries
             for (let i = 1; i <= entryCount; i++) {
                 const debitAmount = parseFloat(document.getElementById(`debitAmount${i}`)?.value) || 0;
@@ -257,11 +367,11 @@
                 totalDebit += debitAmount;
                 totalCredit += creditAmount;
             }
-            
+
             // Update totals display
             document.getElementById('totalDebit').textContent = totalDebit.toFixed(2);
             document.getElementById('totalCredit').textContent = totalCredit.toFixed(2);
-            
+
             // Validate and show error if needed
             if (totalDebit !== totalCredit) {
                 totalError.style.display = 'block';
@@ -278,7 +388,7 @@
         function addEntry() {
             const container = document.getElementById('entriesContainer');
             const count = ++entryCount;
-            
+
             const newEntry = document.createElement('div');
             newEntry.innerHTML = `
                 <div>
@@ -316,9 +426,9 @@
                     <input type="text" id="creditDescription${count}" name="creditDescription${count}" required>
                 </div>
             `;
-            
+
             container.appendChild(newEntry);
-            
+
             // Update account dropdowns for new entry
             const debitSelect = document.getElementById(`debitAccount${count}`);
             const creditSelect = document.getElementById(`creditAccount${count}`);
@@ -348,7 +458,7 @@
          */
         function handleFormSubmit(e) {
             e.preventDefault();
-            
+
             if (!validateTotalAmounts()) {
                 return;
             }
@@ -356,7 +466,7 @@
             const form = e.target;
             const date = form.date.value;
             const entries = [];
-            
+
             // Collect all entries
             for (let i = 1; i <= entryCount; i++) {
                 const debitAccount = form[`debitAccount${i}`]?.value;
@@ -365,8 +475,8 @@
                 const creditAccount = form[`creditAccount${i}`]?.value;
                 const creditAmount = form[`creditAmount${i}`]?.value;
                 const creditDescription = form[`creditDescription${i}`]?.value;
-                
-                if (debitAccount && debitAmount && debitDescription && 
+
+                if (debitAccount && debitAmount && debitDescription &&
                     creditAccount && creditAmount && creditDescription) {
                     entries.push({
                         date: date,
@@ -379,15 +489,15 @@
                     });
                 }
             }
-            
+
             // Submit entries to server
             google.script.run
-                .withSuccessHandler(function() {
+                .withSuccessHandler(function () {
                     alert('ફોર્મ સબમિટ કરવામાં સફળતાપૂર્વક થઈ ગયું!');
                     form.reset(); // Reset form after successful submission
                     setTodayDate(); // Set today's date again
                 })
-                .withFailureHandler(function(error) {
+                .withFailureHandler(function (error) {
                     console.error('Error submitting form:', error);
                     alert('ફોર્મ સબમિટ કરવામાં ભૂલ આવી!');
                 })
@@ -395,4 +505,5 @@
         }
     </script>
 </body>
+
 </html>
