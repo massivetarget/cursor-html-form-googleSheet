@@ -17,75 +17,75 @@ function doGet() {
  */
 function processForm(data) {
   try {
-    console.log('Processing form data:', data);
+    console.log('Received form data:', JSON.stringify(data)); // Log the entire data object
+    if (!data || !data.entries || !Array.isArray(data.entries)) {
+      throw new Error('Invalid data format. Expected an object with an "entries" array.');
+    }
+
     const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
     let sheet = spreadsheet.getSheetByName(SHEET_NAME);
     
     if (!sheet) {
+      console.warn(`Sheet "${SHEET_NAME}" not found. Creating a new sheet.`);
       sheet = spreadsheet.insertSheet(SHEET_NAME);
       sheet.getRange(1, 1, 1, 6).setValues([['ID', 'Date', 'Account', 'Description', 'Debit', 'Credit']]);
     }
-    
+
     const entries = data.entries;
-    console.log('Processing entries:', entries);
-    
-    // डेबिट और क्रेडिट अमाउंट की मैचिंग चेक करें
+    console.log('Processing entries:', JSON.stringify(entries));
+// डेबिट और क्रेडिट अमाउंट की मैचिंग चेक करें
+
+// डेबिट और क्रेडिट अमाउंट की मैचिंग चेक करें
     let totalDebit = 0;
     let totalCredit = 0;
-    
+
     entries.forEach(entry => {
       const debitAmount = parseFloat(entry.debitAmount) || 0;
       const creditAmount = parseFloat(entry.creditAmount) || 0;
-      
+
       if (isNaN(debitAmount) || isNaN(creditAmount)) {
-        throw new Error('અમાઉન્ટ માન્ય નથી');
+        throw new Error(`Invalid amount in entry: ${JSON.stringify(entry)}`);
       }
-      
+
       totalDebit += debitAmount;
       totalCredit += creditAmount;
     });
-    
-    if (Math.abs(totalDebit - totalCredit) > 0.01) { // 0.01 की टॉलरेंस
-      throw new Error(`ડેબિટ અને ક્રેડિટ અમાઉન્ટ મેચ નથી થતા. ડેબિટ: ${totalDebit}, ક્રેડિટ: ${totalCredit}`);
+
+    if (Math.abs(totalDebit - totalCredit) > 0.01) {
+      throw new Error(`Debit and Credit amounts do not match. Debit: ${totalDebit}, Credit: ${totalCredit}`);
     }
-    
-    // पहले सभी डेटा को एकत्रित करें
+
     const rows = [];
     entries.forEach((entry, index) => {
       const entryId = `ENT${Date.now()}_${index + 1}`;
-      
-      // डेबिट एंट्री
       rows.push([
         entryId,
         entry.date,
         entry.debitAccount,
         entry.debitDescription,
         entry.debitAmount,
-        '' // क्रेडिट खाली
+        ''
       ]);
-      
-      // क्रेडिट एंट्री
       rows.push([
         entryId,
         entry.date,
         entry.creditAccount,
         entry.creditDescription,
-        '', // डेबिट खाली
+        '',
         entry.creditAmount
       ]);
     });
-    
-    console.log('Prepared rows:', rows);
-    
-    // अब सभी डेटा को एक साथ लिखें
+
+    console.log('Prepared rows for insertion:', JSON.stringify(rows));
+
     const lastRow = Math.max(sheet.getLastRow(), 1);
     sheet.getRange(lastRow + 1, 1, rows.length, 6).setValues(rows);
-    
-    console.log('Data written successfully');
+
+    console.log('Data written successfully to the sheet.');
     return true;
   } catch (error) {
-    console.error('Error in processForm:', error);
-    throw new Error('ડેટા સેવ કરવામાં ભૂલ: ' + error.toString());
+    console.error('Error in processForm:', error.message, error.stack);
+    throw new Error('Error processing form data: ' + error.message);
   }
 }
 
@@ -205,4 +205,4 @@ function addAccount(name, type) {
     console.error('Error adding new account:', error);
     throw error;
   }
-} 
+}
